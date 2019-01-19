@@ -4,7 +4,6 @@
   width: 65px;
   margin: 5px;
   border-radius: 10px;
-  background-image: url(/static/media/Carte_romagnole.c99ae930.jpg);
-  background-position-x: 0px;
-  background-position-y: -1px;
+  background-image: url('./Carte_romagnole.jpg');
+  border: solid 1px;
 }
