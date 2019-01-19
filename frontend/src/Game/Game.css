@@ -1,0 +1,135 @@
+.Game {
+  text-align: center;
+}
+
+.Game-logo {
+  animation: Game-logo-spin infinite 20s linear;
+  height: 40vmin;
+}
+
+.Game-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.Game-link {
+  color: #61dafb;
+}
+
+.Game-villanCards {
+  height: 200px;
+  display: flex;
+  align-items: center;
+}
+
+.Game-villanCaptureCards {
+  border: 3px dashed red;
+  border-radius: 20px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  width: 450px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+
+.Game-villanHand {
+  height: 140px;
+  width: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Game-middleSection {
+  height: 400px;
+  display: flex;
+  align-items: center;
+}
+
+.Game-middleSection__commonActions {
+  flex-direction: column;
+  display: flex;
+  margin-left: 60px;
+}
+
+.Game-middleSection__rubbishBin {
+    overflow-y: scroll;
+    height: 370px;
+    border: 2px dashed black;
+    border-radius: 10px;
+    width: 210px;
+    display: flex;
+    align-items: baseline;
+    flex-flow: wrap;
+}
+
+.Game-middleSection__commonActions___handPot,
+.Game-middleSection__commonActions___endScreen {
+  border: 5px dotted greenyellow;
+  border-radius: 50px;
+  background-color: green;
+  margin: 20px;
+  padding: 20px;
+}
+
+.Game-heroStuff__heroBets,
+.Game-heroStuff__heroStats {
+  border: 5px dotted aquamarine;
+  border-radius: 40px;
+  background-color: blue;
+  margin: 20px;
+  padding: 20px;
+  color : white;
+}
+
+.Game-villanStuff__villanBets,
+.Game-villanStuff__villanStats {
+  border: 5px dotted red;
+  border-radius: 40px;
+  background-color: brown;
+  margin: 20px;
+  padding: 20px;
+}
+
+.Game-heroCards {
+  height: 200px;
+  display: flex;
+  align-items: center;
+}
+
+.Game-heroCaptureCards {
+  border: 3px dashed rgb(0, 140, 255);
+  border-radius: 20px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  width: 450px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+
+.Game-villanHand,
+.Game-heroHand {
+  height: 140px;
+  width: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Game-villanStuff,
+.Game-heroStuff {
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+}
+

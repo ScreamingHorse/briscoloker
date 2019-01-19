@@ -1,0 +1,10 @@
+.Card {
+  background-color: brown;
+  height: 99px;
+  width: 65px;
+  margin: 5px;
+  border-radius: 10px;
+  background-image: url(/static/media/Carte_romagnole.c99ae930.jpg);
+  background-position-x: 0px;
+  background-position-y: -1px;
+}

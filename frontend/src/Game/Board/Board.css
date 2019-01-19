@@ -1,0 +1,11 @@
+.Board {
+  display: flex;
+  border: 3px dashed red;
+  border-radius: 20px;
+  width: 350px;
+  align-items: center;
+  justify-content: center;
+  margin-left: 150px;
+  flex-direction: column;
+  height: 350px;
+}

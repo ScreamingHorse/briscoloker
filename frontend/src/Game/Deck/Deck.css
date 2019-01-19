@@ -1,0 +1,15 @@
+.Deck-ActualDeck {
+  background-color: brown;
+  height: 200px;
+  width: 110px;
+  margin: 5px;
+  border-radius: 10px;
+  background-image: url("carte-romagnole-back-crop.jpg");
+  color: white;
+}
+
+.Deck {
+  display: flex;
+  flex-direction: column;
+  margin-left: 25px;
+}
