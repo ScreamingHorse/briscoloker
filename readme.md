@@ -12,7 +12,7 @@ Databases:
   (Docker)
 
 Deployment:
-  - Cloudformation
+  - Terraform
 
 
 Rules of the game:
@@ -59,3 +59,5 @@ Rules of the game:
   6. The player who won the prev hand has the initiative. (Place the first bet)
 
   7. When all the cards are played the players count their cards and who got more points will win the game and take the side bet.
+
+The software is distributed under the GNU General Public License
