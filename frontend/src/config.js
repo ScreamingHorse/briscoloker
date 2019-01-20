@@ -1,0 +1,1 @@
+export const WEBSOCKET_SERVER = 'localhost:3001';

@@ -44,8 +44,8 @@ class Card extends Component {
     const buttonText = this.props.buttonText ? this.props.buttonText : 'Play me!';
     return (
       <div className="Card" style={{
-        backgroundPositionY : -1 - 100 * this.props.suit,
-        backgroundPositionX : - 62 * (this.props.value - 1),
+        backgroundPositionY : -1 - 100 * parseInt(this.props.suit),
+        backgroundPositionX : - 62 * (parseInt(this.props.value) - 1),
       }}>
         {this.props.onPlay ?
           <button onClick={() => {this.props.onPlay(this.props.value, this.props.suit)}}>{buttonText}</button>

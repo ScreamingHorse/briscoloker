@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Io from 'socket.io-client';
+import { WEBSOCKET_SERVER } from '../config';
 import './Game.css';
 import Card from './Card/Card';
 import Deck from './Deck/Deck';
@@ -71,6 +73,16 @@ class Game extends Component {
         discardedCards : []
       }
     };
+    var socket = Io(WEBSOCKET_SERVER);
+    socket.on('connect', () => {
+      console.log("I am connected")
+    });
+    socket.on('briscoloker/connected', (data) => {
+      console.log("something happened", data);
+    });
+    socket.on('disconnect', () => {
+      console.log("I am disconnected")
+    });
   }
 
   /**
