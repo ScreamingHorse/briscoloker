@@ -1,21 +1,26 @@
-FrontEnd:
+**FrontEnd:**
+
   - React application
-    https://github.com/facebook/create-react-app
+    [https://github.com/facebook/create-react-app]([https://github.com/facebook/create-react-app])
 
-Backend:
-  - For MVP (real time): socket.io or Greengrass (?)
-  - Api -> SAM Local
+**Backend:**
 
-Databases:
+- Socket.io
+
+**Databases:**
+
   - Mongo DB
   - Redis
-  (Docker)
+  (Docker for development)
 
-Deployment:
-  - Terraform
+**Prereq:**
+
+- nodeJs [https://nodejs.org/en/](https://nodejs.org/en/)
+- nodemon [https://nodemon.io/](https://nodemon.io/) `npm install -g nodemon`
 
 
-Rules of the game:
+**Rules of the game:**
+
 2 player game:
   Deck: 40 cards deck
 
@@ -60,4 +65,4 @@ Rules of the game:
 
   7. When all the cards are played the players count their cards and who got more points will win the game and take the side bet.
 
-The software is distributed under the GNU General Public License
+***The software is distributed under the GNU General Public License***
