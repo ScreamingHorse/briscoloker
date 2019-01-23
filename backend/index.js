@@ -81,7 +81,8 @@ io.on('connection', (socket) => {
 
   //triggered on reconnection
   socket.on('reconnect_me',(payload)=>{
-    reconnectMe(socket, briscolokerMongoClient, payload);
+    debug('payload', payload);
+    reconnectMe(socket, briscolokerMongoClient, payload.token);
   });
 
   //triggered when the browser goes to /game
