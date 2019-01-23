@@ -21,9 +21,11 @@ class Lobby extends Component {
         this.handleGoToTheGame();
       }, 2000)
     });
+
     this.state = {
       isSearching : false,
       searchTime : 0,
+      token : localStorage.getItem("token"),
     };
   }
 
@@ -34,7 +36,7 @@ class Lobby extends Component {
   handlePlay() {
     //when a player clicks play, it create a new room or it will join an avaialble room
     // 1. Tell the server you are looking for a game
-    window.socket.emit('join_lobby');
+    window.socket.emit('join_lobby',{token : this.state.token});
     // 2. wait for someone to join
     this.searchTimer = setInterval(() => {
       this.setState({
