@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import Io from 'socket.io-client';
-import { WEBSOCKET_SERVER } from '../config';
 import './Game.css';
 import Card from './Card/Card';
 import Deck from './Deck/Deck';
@@ -62,6 +60,7 @@ class Game extends Component {
         hand: [],
         score : 0,
         chips : 100,
+        name : '',
       },
       deck:[],
       trumpCard: {},
@@ -71,18 +70,33 @@ class Game extends Component {
           villan: null,
         },
         discardedCards : []
-      }
+      },
     };
-    var socket = Io(WEBSOCKET_SERVER);
-    socket.on('connect', () => {
-      console.log("I am connected")
+    //Tell the socket server that the game UI is ready
+    window.socket.emit('table_ready');
+    //All the topic we are listeing
+    window.socket.on('villan_info',(data) => {
+      console.log('Message received from villan_info', data);
+      let villan = this.state.villan;
+      villan.name = data.name
+      this.setState({
+        villan,
+      })
     });
-    socket.on('briscoloker/connected', (data) => {
-      console.log("something happened", data);
+    //Try to reconnect to a game with a different socket.id
+    window.socket.on('connect', () => {
+      //Check if I have a game ready
+      let matchId = localStorage.getItem('matchId');
+      let oldSocketId = localStorage.getItem('socketId');
+      localStorage.setItem('socketId',window.socket.id);
+      if (matchId !== null) {
+        window.socket.emit('reconnect_me',{
+          matchId,
+          oldSocketId,
+        });
+      }
     });
-    socket.on('disconnect', () => {
-      console.log("I am disconnected")
-    });
+
   }
 
   /**
@@ -668,7 +682,7 @@ class Game extends Component {
             </div>
             <div className="Game-villanStuff">
               <div className="Game-villanStuff__villanStats">
-                  Villan chips: {this.state.villan.chips} <br />
+                  {this.state.villan.name} chips: {this.state.villan.chips} <br />
               </div>
               <div className="Game-villanStuff__villanBets">
                 {this.isMyBettingInitiative('villan')?
@@ -713,12 +727,12 @@ class Game extends Component {
               <div>{`Initiative ${this.state.currentHand.initiative}`}</div>
               <div>{`isBettingPhase ${this.state.currentHand.isBettingPhase.toString()}`}</div>
               <div className="Game-middleSection__commonActions___handPot">
-                Villan bets: {this.state.currentHand.villanBets} <br />
+                {this.state.villan.name} bets: {this.state.currentHand.villanBets} <br />
                 Hero bets: {this.state.currentHand.heroBets} <br />
                 Total hand bet: {this.state.currentHand.pot} <br />
               </div>
               <div className="Game-middleSection__commonActions___endScreen">
-                Villan score: {this.state.villan.score} <br />
+                {this.state.villan.name} score: {this.state.villan.score} <br />
                 Hero score: {this.state.hero.score} <br />
                 Side bet: {this.state.sideBet * 2} <br />
                 {this.state.isGameFinished ?

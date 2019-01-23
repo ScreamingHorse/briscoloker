@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import Io from 'socket.io-client';
-import { WEBSOCKET_SERVER } from '../config';
 import './Lobby.css';
 
 
@@ -11,18 +9,9 @@ class Lobby extends Component {
     this.handlePlay = this.handlePlay.bind(this);
     this.handleGoToTheGame = this.handleGoToTheGame.bind(this);
 
-    this.socket = Io(WEBSOCKET_SERVER);
-    this.socket.on('connect', () => {
-      console.log("I am connected")
-    });
-    this.socket.on('briscoloker/connected', (data) => {
-      console.log("something happened", data);
-    });
-    this.socket.on('disconnect', () => {
-      console.log("I am disconnected")
-    });
-    this.socket.on('match_ready', (roomName) => {
-      console.log("The game is ready on", roomName);
+    window.socket.on('match_ready', (matchId) => {
+      console.log("The game is ready on", matchId);
+      localStorage.setItem('matchId',matchId);
       clearInterval(this.searchTimer);
       this.setState({
         isSearching : false,
@@ -45,7 +34,7 @@ class Lobby extends Component {
   handlePlay() {
     //when a player clicks play, it create a new room or it will join an avaialble room
     // 1. Tell the server you are looking for a game
-    this.socket.emit('join_lobby');
+    window.socket.emit('join_lobby');
     // 2. wait for someone to join
     this.searchTimer = setInterval(() => {
       this.setState({
