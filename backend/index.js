@@ -93,6 +93,7 @@ io.on('connection', (socket) => {
   ///triggerred when the player press play
   socket.on('join_lobby', async (data) => {
     //@todo: validate the tokens
+    debug('message for join_lobby', data);
     await joinLobby(socket, io, briscolokerMongoClient, data.token);
   });
 

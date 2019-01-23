@@ -28,7 +28,7 @@ const insertOneThingInMongo = (collection, document) => {
 
 const deleteOneByObjectId = (collection, objectId) => {
   return new Promise((resolve, reject) => {
-    openRoomsCollection.deleteOne({_id:objectId},(err, result) => {
+    collection.deleteOne({_id:objectId},(err, result) => {
         if (err) {
           reject(err);
         } else {

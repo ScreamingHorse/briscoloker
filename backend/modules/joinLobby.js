@@ -21,7 +21,7 @@ module.exports = async (socket, io, mongoClient, token) => {
       if (deleteResult) {
         //2. Update the room object with the current socket ID
         //2.1 Get user info from DB
-        let user = await mongoDbHelpers.getStuffFromMongo(usersCollecion,{token:token},{},1);
+        let user = await mongoDbHelpers.getStuffFromMongo(usersCollecion,{_id:ObjectId(token)},{},1);
         roomToJoin.players.push({
           id : token,
           name : user[0].username,
@@ -46,8 +46,8 @@ module.exports = async (socket, io, mongoClient, token) => {
       //2 no rooms, I need to create one
       let roomName = "MagicRoom";
       //Grab user information from the DB
-      let user = await mongoDbHelpers.getStuffFromMongo(usersCollecion,{token:token},{},1);
-      console.log('user',user[0]);
+      let user = await mongoDbHelpers.getStuffFromMongo(usersCollecion,{_id:ObjectId(token)},{},1);
+      console.log('user',user);
       roomObject = {
         name : roomName,
         created : new Date(),
