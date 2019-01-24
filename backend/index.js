@@ -80,15 +80,15 @@ io.on('connection', (socket) => {
   debug('a user is connected', socket.id);
 
   //triggered on reconnection
-  socket.on('reconnect_me',(payload)=>{
-    debug('payload', payload);
-    reconnectMe(socket, briscolokerMongoClient, payload.token);
+  socket.on('reconnect_me',async (payload)=>{
+    debug('message for reconnect_me payload', payload);
+    await reconnectMe(socket, briscolokerMongoClient, payload.token);
   });
 
   //triggered when the browser goes to /game
-  socket.on('table_ready',async ()=>{
-    await tableReady(socket, briscolokerMongoClient);
-    await startTheGame(socket, briscolokerMongoClient);
+  socket.on('table_ready',async (payload)=>{
+    debug('message for table_ready payload', payload);
+    await tableReady(socket, briscolokerMongoClient, payload.token);
   })
 
   ///triggerred when the player press play

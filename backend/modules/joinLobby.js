@@ -65,7 +65,7 @@ module.exports = async (socket, io, mongoClient, token) => {
       //so I join the socket.io room and wait for the 
       //other player
       if (insertResult) {
-        debug("Room craeted", roomObject);
+        debug("Room created", roomObject);
         socket.join(roomName);
       }
     }

@@ -15,7 +15,7 @@ class Deck extends Component {
     return (
       <div className="Deck">
         <div className="Deck-ActualDeck">
-          Card left {this.props.deck.length}
+          Card left {this.props.cardLeft}
         </div>
         <Card 
           value={this.props.trumpCard.value}

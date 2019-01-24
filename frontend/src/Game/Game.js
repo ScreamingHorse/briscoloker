@@ -31,8 +31,9 @@ class Game extends Component {
      * 2: Clubs
      * 3: Diamonds
      */
+    let token = localStorage.getItem('token');
     this.state = {
-      token : localStorage.getItem('token'),
+      token : token,
       isGameFinished : false,
       gameWinner: '',
       currentHand: {
@@ -74,19 +75,50 @@ class Game extends Component {
       },
     };
     //Tell the socket server that the game UI is ready
-    window.socket.emit('table_ready');
+    window.socket.emit('table_ready',{ token });
     //All the topic we are listeing
-    window.socket.on('villan_info',(data) => {
-      console.log('Message received from villan_info', data);
+    //This topic is used to receive the state of the game from the server
+    window.socket.on('game_state',(data) => {
+      console.log('Message received from game state', data);
       if (data.result === false) {
         //there is no game for you bro
         this.props.history.push('/lobby');
       } else {
+        //I don't care abou the state of the client,
+        //because when the server send the game state
+        //is it the TRUTH
+        //server is 100% authoritative
+        //debugger;
         let villan = this.state.villan;
-        let remoteVillan = data.result;
+        let hero = this.state.hero;
+
+        let remoteVillan = data.result.villan;
+        let remoteHero = data.result.hero;
+        
         villan.name = remoteVillan.name;
+        villan.cardsCaptured = remoteVillan.cardsCaptured;
+        villan.hand = [];
+        villan.score = remoteVillan.score;
+        villan.chips = remoteVillan.chips;
+
+        hero.cardsCaptured = remoteHero.cardsCaptured;
+        hero.hand = remoteHero.hand;
+        hero.score = remoteHero.score;
+        hero.chips = remoteHero.chips;
+
+        let trumpCard = data.result.trumpCard;
+        let cardLeft = data.result.deck.cardLeft;
+
+        let currentHand = Object.assign({}, this.state.currentHand);
+        currentHand.roundLeader = hero.roundLeader?'hero':'villan';
+        currentHand.initiative = hero.initiative?'hero':'villan';
+
         this.setState({
           villan,
+          hero,
+          trumpCard,
+          cardLeft,
+          currentHand,
         })
       }
     });
@@ -96,11 +128,11 @@ class Game extends Component {
       let token = localStorage.getItem('token');
       if (token !== null) {
         window.socket.emit('reconnect_me',{ token });
+        window.socket.emit('table_ready',{ token });
       } else {
         this.props.history.push('/');
       }
     });
-
   }
 
   /**
@@ -313,7 +345,7 @@ class Game extends Component {
    *    - reset captured
    *    - reset hand
    */
-  newGame() {
+  newGame() { //@Todo: MOVED TO THE SERVER!!!! ERASE ME
     let board = Object.assign({},this.state.board);
     board.playedCards.hero = null;
     board.playedCards.villan = null;
@@ -720,6 +752,7 @@ class Game extends Component {
             <Deck 
               trumpCard = {this.state.trumpCard}
               deck = {this.state.deck}
+              cardLeft = {this.state.cardLeft}
             />
             <Board 
               board = {this.state.board}

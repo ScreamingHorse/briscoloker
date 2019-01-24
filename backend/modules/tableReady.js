@@ -1,47 +1,36 @@
 const debug = require('debug')('briscoloker:tableReady');
-const ObjectId = require("mongodb").ObjectID;
+const briscolokerHelpers = require('./briscolokerHelpers');
 
-module.exports = (socket, mongoClient) => {
-  const closedRoomCollection = mongoClient.collection('closedRoom');
-  const searchObject = {
-    players: {
-      $elemMatch : {
-        id : socket.id
+module.exports = async (socket, mongoClient, token) => {
+  try {
+    //1 set myself as ready
+    await briscolokerHelpers.updateHero(token, mongoClient, {
+      isReady : true
+    });
+    //3 check if the opponent is ready
+    let villan = await briscolokerHelpers.getVillan(token, mongoClient);
+    debug('villan', villan);
+    if (villan.isReady) {
+      debug('Villan ready');
+      let game = briscolokerHelpers.getMyGameBro(token, mongoClient);
+      let gameState = {};
+      if (game.isStarted) {
+        //game already started, sending back the state of it
+        //I want to send only relevant data to the client, avoiding sending deck and villan infos
+        gameState = await briscolokerHelpers.formatOutput(token,game);
+        debug('Sending to game_state', gameState);
+        socket.emit('game_state',{result: gameState});
+      } else {
+        //I need to start the game!
+        gameState = await briscolokerHelpers.startTheGameWillYa(token, mongoClient);
+        //I want to send only relevant data to the client, avoiding sending deck and villan infos
+        let outputToTheClient = await briscolokerHelpers.formatOutput(token, gameState);
+        debug('Sending to game_state', outputToTheClient);
+        socket.emit('game_state',{result: outputToTheClient});
       }
     }
-  };
-  closedRoomCollection.find(searchObject).limit(1).toArray((err, roomFromMongo) => {
-    if (err) {
-      console.log(err);
-      throw new Error(err);
-    }
-    const myRoom = roomFromMongo[0];
-    if (typeof myRoom !== "undefined") {
-      debug("myRoom",myRoom);
-      let villan = myRoom.players
-        .filter(P => {
-          return P !== socket.id
-        })
-        .map(P => {
-          return {
-            name : P
-          }
-        })[0];
-      socket.emit('villan_info',villan);
-      debug("Emitted villan info");
-      //check if the other is ready
-      let hero = myRoom.players
-        .filter(P => {
-          return P === socket.id
-        });
-      hero[0].isReady = true;
-      closedRoomCollection.updateOne({_id:ObjectId(roomToJoin._id)},myRoom,(err,results) => {
-        if (villan.isReady) {
-          console.log('Villan ready');
-        } else {
-          console.log('Villan not ready');
-        }
-      });
-    }
-  });
+  } catch (e) {
+    console.error(e);
+    socket.emit('game_state',{result : false});
+  }
 }
