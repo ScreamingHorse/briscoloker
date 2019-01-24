@@ -1,0 +1,12 @@
+Day 9:
+- Created the mongo helpers so we can await the DB
+- Refactored the joinLobby storing the 'token' and the 'username' on the games collection
+- Renamed closedRooms to games
+- Reconnection to an existing game from '/game'
+- Moved 'start game on the server'
+
+Known issues:
+- It seems that everytime a player 'reconnect' to the socket.io (reload the /game page) the server creates a new game
+
+Todo:
+- Frontend: Delete the code for new game as it is now on the server
