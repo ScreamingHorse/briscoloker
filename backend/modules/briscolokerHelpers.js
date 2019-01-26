@@ -84,12 +84,18 @@ const startTheGameWillYa = async (roomName, mongoClient) => {
     game.players[0].chips = 100;
     game.players[0].roundLeader = false;
     game.players[0].initiative = false;
+    game.players[0].currentHand = {
+      bets : 0,
+    };
     game.players[1].cardsCaptured = [];
     game.players[1].hand = [];
     game.players[1].score = 0;
     game.players[1].chips = 100;
     game.players[1].roundLeader = false;
     game.players[1].initiative = false;
+    game.players[1].currentHand = {
+      bets : 0,
+    };
     //deck
     game.deck = [];
     //Everything is reset
@@ -119,6 +125,16 @@ const startTheGameWillYa = async (roomName, mongoClient) => {
     //step 5 pick the Trump
     game.trumpCard = game.deck.pop();
     game.isStarted = true;
+    //step 6 create the current hand object
+    game.currentHand = {
+        bettingRound: 0,
+        isBettingPhase: true,
+        isFolded: false,
+        pot:0,
+        hasHeroPlayed : false,
+        hasVillanPlayed : false,
+        winner : null,
+    }
     const gamesCollection = mongoClient.collection('games');
     await mongoDbHelpers.updateOneByObjectId(gamesCollection,ObjectId(game._id),game);
     return true;
@@ -144,14 +160,99 @@ const formatOutput = async (token, mongoClient) => {
       roundLeader : villan.roundLeader,
       initiative : villan.initiative,
       cardsCaptured : villan.cardsCaptured,
+      currentHand : villan.currentHand,
     },
     hero : hero,
     trumpCard : game.trumpCard,
+    currentHand : game.currentHand,
     deck : {
       cardLeft : game.deck.length,
     }
   }
   return gameState;
+}
+
+const sendAllTheGameStates = async (io, gameName, mongoClient) => {
+  try {
+    const clients = Object.keys(io.sockets.adapter.rooms[gameName].sockets);
+    debug(clients, clients.length);
+    for (let idx = 0; idx < clients.length; idx ++) {
+      //debug("idx",idx);
+      let client = io.sockets.connected[clients[idx]];
+      let clientToken = client.token;
+      debug(clientToken);
+      let gameState = await formatOutput(clientToken, mongoClient);
+      console.log('gameState',gameState);
+      client.emit('game_state',{result: gameState});
+    }
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+}
+
+const betting = async (token, mongoClient, bet) => {
+
+  //get the game
+  debug("token",token);
+  debug("bet",bet);
+  let game = await getMyGameBro(token, mongoClient);
+  let hero = game.players.filter(P => {
+    return P.id === token
+  })[0];
+  let villan = game.players.filter(P => {
+    return P.id !== token
+  })[0];
+  let currentHand = game.currentHand;
+
+  //1. need to check if the player has the money to bet
+  if (hero.chips < bet) {
+    //NOt enought money to 
+    //1. Calculate the difference
+    let overBet = bet - hero.chips;
+    //2. size the bet to all the hero's money
+    bet = hero.chips;
+    //3. if the new bet covers what villan put into the pot
+    if ((parseInt(hero.currentHand.bets) + bet) < parseInt(villan.currentHand.bets)) {
+      //4.Hero is betting less then what villan did,
+      //meaning that he is calling an all in
+      villan.chips += overBet;
+      //4.update the current bet of the hero
+      villan.currentHand.villanBets -= bet;
+      currentHand.pot -= overBet;
+    }
+  } else {
+      //villan is without money, he is all in some how
+      //if he put more money on the pot, need to match
+      //I assume an overbet by the hero
+      if (villan.chips === 0 && villan.currentHand.bets >= hero.currentHand.bets) {
+        //need to resize the bet
+        bet = villan.currentHand.bets - hero.currentHand.bets;
+      }
+  }
+  //2. spend the money
+  hero.chips -= bet;
+  currentHand.pot += bet;
+  hero.currentHand.bets +=bet;
+  //3. switch the initiative
+  hero.initiative = false;
+  villan.initiative = true;
+  //4. check if the betting round is over
+  //   they played the same amount of chips / it's not the first check
+  if (villan.currentHand.bets === hero.currentHand.bets && !(currentHand.bettingRound ===0)) {
+    currentHand.isBettingPhase = false;
+    //if the round ends, hero get the card initiave
+  }
+  //5. bump the betting round
+  currentHand.bettingRound ++;
+  //6. check if villan has still anything left
+  //if not end the betting phase
+  if (villan.chips === 0) {
+    currentHand.bettingPhase = false;
+  }
+  //7 save the state of the game into mongo
+  const gamesCollection = mongoClient.collection('games');
+  await mongoDbHelpers.updateOneByObjectId(gamesCollection,ObjectId(game._id),game);
 }
 
 module.exports = {
@@ -160,4 +261,6 @@ module.exports = {
   updateHero,
   startTheGameWillYa,
   formatOutput,
+  betting,
+  sendAllTheGameStates,
 }

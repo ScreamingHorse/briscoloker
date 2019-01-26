@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './Login.css';
-import {API_ENDPOINT} from '../config';
+import {API_ENDPOINT, WEBSOCKET_SERVER} from '../config';
+import Io from 'socket.io-client';
 const axios = require('axios');
 
 class Login extends Component {
@@ -55,6 +56,15 @@ class Login extends Component {
     })
       .then(result => {
         localStorage.setItem('token',result.data.token);
+        //CREATE THE SOCKET SERVER
+        //I create the socket.io client on window so I can access it everywhere
+        //if (!window.socket) {
+        let token = localStorage.getItem('token');
+        window.socket= Io(WEBSOCKET_SERVER, {query: `token=${token}`});
+        //}
+        window.socket.on('disconnect', () => {
+          console.log("I am disconnected")
+        });
         setInterval(()=> {
           this.props.history.push('/lobby');
         },2500);

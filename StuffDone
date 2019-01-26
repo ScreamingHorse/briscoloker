@@ -14,4 +14,6 @@ Todo:
 Day 10:
 
 - Game is now craeted after both players joined the lobby (join_lobby)
-- Table ready sends back the state of the match, it doesn;t start it
+- Table ready sends back the state of the match, it doesn't start it
+- We are passing the token as QS when connecting to the webSocket
+- The betting pahse is on the server now!

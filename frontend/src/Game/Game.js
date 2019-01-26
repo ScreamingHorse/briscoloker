@@ -94,6 +94,7 @@ class Game extends Component {
 
         let remoteVillan = data.result.villan;
         let remoteHero = data.result.hero;
+        let remoteCurrentHand = data.result.currentHand
         
         villan.name = remoteVillan.name;
         villan.cardsCaptured = remoteVillan.cardsCaptured;
@@ -105,6 +106,8 @@ class Game extends Component {
         hero.hand = remoteHero.hand;
         hero.score = remoteHero.score;
         hero.chips = remoteHero.chips;
+        hero.initiative = remoteHero.initiative;
+        hero.roundLeader = remoteHero.roundLeader;
 
         let trumpCard = data.result.trumpCard;
         let cardLeft = data.result.deck.cardLeft;
@@ -112,6 +115,12 @@ class Game extends Component {
         let currentHand = Object.assign({}, this.state.currentHand);
         currentHand.roundLeader = hero.roundLeader?'hero':'villan';
         currentHand.initiative = hero.initiative?'hero':'villan';
+        //debugger
+        currentHand.heroBets = remoteHero.currentHand.bets;
+        currentHand.villanBets = remoteVillan.currentHand.bets;
+        currentHand.pot = remoteCurrentHand.pot;
+        currentHand.bettingRound = remoteCurrentHand.bettingRound;
+        currentHand.isBettingPhase = remoteCurrentHand.isBettingPhase;
 
         this.setState({
           villan,
@@ -507,65 +516,11 @@ class Game extends Component {
   heroBetting(bet) {
     //The betting round finishes when he put into the pot the same amount of money of the other one
     //debugger
-    let hero = Object.assign({},this.state.hero);
-    let villan = Object.assign({},this.state.villan);
-    let currentHand = Object.assign({},this.state.currentHand);
-    //1. need to check if the villan has the money to bet
-    //   if not it is an all in
-    if (hero.chips < bet) {
-      //debugger
-      //1. Calculate the difference to the villan
-      let overBet = bet - hero.chips;
-      //2. size the bet to all the hero's money
-      bet = hero.chips;
-      //3. if the new bet covers what villan put into the pot
-      if ((currentHand.heroBets + bet) < currentHand.villanBets) {
-        //4.Hero is betting less then what villan did,
-        //meaning that he is calling an all in
-        villan.chips += overBet;
-        //4.update the current bet of the hero
-        currentHand.villanBets -= overBet;
-        currentHand.pot -= overBet;
-      }
-    } else {
-      //villan is without money, he is all in some how
-      //if he put more money on the pot, need to match
-      //I assume an overbet by the hero
-      if (villan.chips === 0 && currentHand.villanBets >= currentHand.heroBets) {
-        //need to resize the her bet
-        bet = currentHand.villanBets - currentHand.heroBets;
-      }
-    }
-    //2. spend the villan money
-    hero.chips -= bet;
-    currentHand.pot += bet;
-    currentHand.heroBets +=bet;
-    //3. give away the initiave 
-    currentHand.initiative = 'villan';
-    //4. check if the betting round is over
-    //   they played the same amount of chips / it's not the first check
-    if (currentHand.villanBets === currentHand.heroBets && !(currentHand.bettingRound ===0)) {
-      currentHand.isBettingPhase = false;
-      //if the round ends, hero get the card initiave
-      //currentHand.initiative = 'hero';
-    }
-    //5. bump the betting round
-    currentHand.bettingRound ++;
-    //6. Check if the hero still have money
-    //if (hero.chips === 0) {
-      //no money = no more bets
-    //  currentHand.isBettingPhase = false;
-    //}
-    //check if villan has still anything left
-    //if not end the betting phase
-    if (villan.chips === 0) {
-      currentHand.bettingPhase = false;
-    }
-    this.setState({
-      hero,
-      villan,
-      currentHand,
-    })
+    //Tell the socket server that the game UI is ready
+    window.socket.emit('betting',{ 
+      token : this.state.token,
+      bet : bet
+    });
   }
   
   villanFolding() {
@@ -703,7 +658,7 @@ class Game extends Component {
                 })
               }
             </div>
-            <div className="Game-villanHand">
+            {/*<div className="Game-villanHand">
             {
                 this.state.villan.hand.map((C,i) => {
                   return <Card 
@@ -715,12 +670,13 @@ class Game extends Component {
                   />
                 })
               }
-            </div>
+            </div>*/}
             <div className="Game-villanStuff">
               <div className="Game-villanStuff__villanStats">
-                  {this.state.villan.name} chips: {this.state.villan.chips} <br />
+                  Opponent name: {this.state.villan.name} <br />
+                  Chips: {this.state.villan.chips} <br />
               </div>
-              <div className="Game-villanStuff__villanBets">
+              {/*<div className="Game-villanStuff__villanBets">
                 {this.isMyBettingInitiative('villan')?
                   this.state.currentHand.bettingRound === 0 ?
                     <React.Fragment> 
@@ -734,7 +690,7 @@ class Game extends Component {
                       <button onClick={() => {this.villanFolding()}}>Fold</button>
                     </React.Fragment>
                   : null }
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="Game-middleSection">
@@ -764,13 +720,15 @@ class Game extends Component {
               <div>{`Initiative ${this.state.currentHand.initiative}`}</div>
               <div>{`isBettingPhase ${this.state.currentHand.isBettingPhase.toString()}`}</div>
               <div className="Game-middleSection__commonActions___handPot">
-                {this.state.villan.name} bets: {this.state.currentHand.villanBets} <br />
-                Hero bets: {this.state.currentHand.heroBets} <br />
-                Total hand bet: {this.state.currentHand.pot} <br />
+                Bets: <br />
+                Opp: {this.state.currentHand.villanBets} <br />
+                Hero: {this.state.currentHand.heroBets} <br />
+                Total hand: {this.state.currentHand.pot} <br />
               </div>
               <div className="Game-middleSection__commonActions___endScreen">
-                {this.state.villan.name} score: {this.state.villan.score} <br />
-                Hero score: {this.state.hero.score} <br />
+                Score: <br />
+                Opp: {this.state.villan.score} <br />
+                Hero: {this.state.hero.score} <br />
                 Side bet: {this.state.sideBet * 2} <br />
                 {this.state.isGameFinished ?
                   <React.Fragment>

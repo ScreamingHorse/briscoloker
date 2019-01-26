@@ -4,18 +4,13 @@ import './index.css';
 import * as serviceWorker from './serviceWorker';
 import Routes from './routes';
 import { BrowserRouter } from 'react-router-dom';
-
-//I create the socket.io client on window so I can access it everywhere
+import {WEBSOCKET_SERVER} from './config';
 import Io from 'socket.io-client';
-import { WEBSOCKET_SERVER } from './config';
-if (!window.socket)
-  window.socket= Io(WEBSOCKET_SERVER);
 
-
-window.socket.on('disconnect', () => {
-  console.log("I am disconnected")
-});
-
+if (!window.socket) {
+  let token = localStorage.getItem('token');
+  window.socket= Io(WEBSOCKET_SERVER, {query: `token=${token}`});
+}
 ReactDOM.render(<BrowserRouter><Routes /></BrowserRouter>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change

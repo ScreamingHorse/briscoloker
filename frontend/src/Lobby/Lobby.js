@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './Lobby.css';
 
-
 class Lobby extends Component {
 
   constructor(props) {
@@ -9,9 +8,7 @@ class Lobby extends Component {
     this.handlePlay = this.handlePlay.bind(this);
     this.handleGoToTheGame = this.handleGoToTheGame.bind(this);
 
-    window.socket.on('match_ready', (matchId) => {
-      console.log("The game is ready on", matchId);
-      localStorage.setItem('matchId',matchId);
+    window.socket.on('match_ready', () => {
       clearInterval(this.searchTimer);
       this.setState({
         isSearching : false,

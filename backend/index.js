@@ -28,9 +28,8 @@ MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
 //SOCKET.IO Modules
 const joinLobby = require('./modules/joinLobby');
 const tableReady = require('./modules/tableReady');
-const startTheGame = require('./modules/startTheGame');
 const reconnectMe = require('./modules/reconnectMe');
-
+const betting = require('./modules/betting');
 //API Modules
 const registerUser = require('./modules/registerUser');
 const loginUser = require('./modules/loginUser');
@@ -78,7 +77,8 @@ app.post('/register', async (req, res) => {
 
 io.on('connection', (socket) => {
   debug('a user is connected', socket.id);
-
+  console.log("Query string of the socket",socket.handshake.query);
+  socket.token = socket.handshake.query.token;
   //triggered on reconnection
   socket.on('reconnect_me',async (payload)=>{
     debug('message for reconnect_me payload', payload);
@@ -92,10 +92,16 @@ io.on('connection', (socket) => {
   })
 
   ///triggerred when the player press play
-  socket.on('join_lobby', async (data) => {
+  socket.on('join_lobby', async (payload) => {
     //@todo: validate the tokens
-    debug('message for join_lobby', data);
-    await joinLobby(socket, io, briscolokerMongoClient, data.token);
+    debug('message for join_lobby', payload);
+    await joinLobby(socket, io, briscolokerMongoClient, payload.token);
+  });
+
+  //the client send a message when the player is betting
+  socket.on('betting', async (payload) => {
+    debug('message for betting', payload);
+    await betting(io, briscolokerMongoClient, payload.token, payload.bet);
   });
 
 });
