@@ -8,9 +8,7 @@ class Game extends Component {
 
   constructor(props) {
     super(props);
-    this.newGame = this.newGame.bind(this);
     this.resolveHand = this.resolveHand.bind(this);
-    this.playAVillanCard = this.playAVillanCard.bind(this);
     this.playAHeroCard = this.playAHeroCard.bind(this);
     this.heroBetting = this.heroBetting.bind(this);
     this.villanBetting = this.villanBetting.bind(this);
@@ -121,6 +119,14 @@ class Game extends Component {
         currentHand.pot = remoteCurrentHand.pot;
         currentHand.bettingRound = remoteCurrentHand.bettingRound;
         currentHand.isBettingPhase = remoteCurrentHand.isBettingPhase;
+        let board = Object.assign({}, this.state.board);
+        board = {
+          playedCards: {
+            hero: remoteHero.currentHand.playedCard,
+            villan: remoteVillan.currentHand.playedCard,
+          },
+          discardedCards : []
+        };
 
         this.setState({
           villan,
@@ -128,6 +134,7 @@ class Game extends Component {
           trumpCard,
           cardLeft,
           currentHand,
+          board,
         })
       }
     });
@@ -348,169 +355,17 @@ class Game extends Component {
   }
 
   /**
-   * Creates a new game:
-   * - shuffle the deck
-   * - reset the cards
-   *    - reset captured
-   *    - reset hand
-   */
-  newGame() { //@Todo: MOVED TO THE SERVER!!!! ERASE ME
-    let board = Object.assign({},this.state.board);
-    board.playedCards.hero = null;
-    board.playedCards.villan = null;
-    board.discardedCards = [];
-    let hero = Object.assign({},this.state.hero);
-    hero.cardsCaptured = [];
-    hero.hand = [];
-    hero.score = 0;
-    //hero.chips = 100;
-    let villan = Object.assign({},this.state.villan);
-    villan.cardsCaptured = [];
-    villan.hand = [];
-    villan.score = 0;
-    //villan.chips = 100;
-    let deck = Object.assign({},this.state.deck);
-    deck = [];
-    //Everything is reset
-    //Step 1: Build the deck
-    //cycling the suits (0->3)
-    for (var s = 0; s <= 3; s++) {
-      //values (1 -> 10)
-      for (var v = 1; v <= 10; v++) {
-        deck.push({
-          value: v,
-          suit: s,
-        });
-      }
-    }
-    //step 2: Shuffle the deck
-    deck.sort(()=> Math.random()-0.5);
-    //step 3 decide who is the first to play
-    let roundLeader = ['hero','villan'].sort(()=>Math.random()-0.5)[0];
-    //step 4 pick the cards for the players
-    //I am picking one each.
-    for (var ii=0; ii<3; ii++) {
-      hero.hand.push(deck.pop());
-      villan.hand.push(deck.pop());
-    }
-    //step 5 pick the Trump
-    let trumpCard = deck.pop();
-    //step 6 bet
-    //@TODO: reduce the increse rate of the sidebet
-    //Sidebet to be the side bet for each player
-    let sideBet = (this.state.sideBet + 10) * 2;
-    //all the side bets
-
-    //check if hero has enough markCoin to play
-    if (hero.chips > sideBet) {
-      hero.chips -= sideBet;
-    } else {
-      //hero doesn't have enough money so he goes AAAAAAALL IN!
-      sideBet = hero.chips;
-      hero.chips = 0;
-    }
-    //check if villan has enough markCoin to play
-    if (villan.chips > sideBet) {
-      villan.chips -= sideBet;
-    } else {
-      //hero get back the money he played
-      hero.chips += sideBet;
-      //the new sidebet is the villan remainging chips
-      sideBet = villan.chips;
-      villan.chips = 0;
-      //hero pays the bet
-      hero.chips -= sideBet;
-    }
-    
-    this.setState({
-      trumpCard,
-      board,
-      hero,
-      villan,
-      deck,
-      currentHand : {
-        roundLeader,
-        initiative : roundLeader,
-        pot : 0,
-        heroBets : 0,
-        villanBets : 0,
-        isBettingPhase : true,
-        bettingRound: 0,
-        isFolded: false,
-        hasHeroPlayed : false,
-        hasVillanPlayed : false,
-        winner : null,
-      },
-      sideBet,
-      gameWinner : '',
-      isGameFinished : false,
-    })
-  }
-
-  /**
-   * Plays a card for the villan
-   */
-  playAVillanCard (value, suit) {
-    let villan = Object.assign({},this.state.villan);
-    let board = Object.assign({},this.state.board);
-    let currentHand = Object.assign({},this.state.currentHand);
-    //Villan losing the initiative
-    currentHand.initiative = 'hero';
-    //The card that I want to play. Filter returns an array, I need only the first element
-    let cardToPlay = villan.hand.filter(C => C.value === value && C.suit === suit)[0];
-    villan.hand.splice(villan.hand.findIndex(C => C.value === value && C.suit === suit),1);
-    if (currentHand.isFolded) {
-      board.discardedCards.push(cardToPlay)
-    } else {
-      board.playedCards.villan = cardToPlay;
-    }
-    //4. mark that villan played
-    currentHand.hasVillanPlayed = true;
-    this.setState({
-      board,
-      villan,
-      currentHand,
-    },()=> {
-      //if the hero card is already played I trigger the resolve hand
-      if (this.state.currentHand.hasHeroPlayed) {
-        setTimeout(()=> {
-          this.resolveHand();
-        },150);
-      }
-    })
-  }
-
-  /**
    * Plays a card for the hero
    */
   playAHeroCard (value, suit) {
-    let hero = Object.assign({},this.state.hero);
-    let board = Object.assign({},this.state.board);
-    let currentHand = Object.assign({},this.state.currentHand);
-    //Hero lose the intiative
-    currentHand.initiative = 'villan';
-    //The card that I want to play
-    let cardToPlay = hero.hand.filter(C => C.value === value && C.suit === suit)[0];
-    hero.hand.splice(hero.hand.findIndex(C => C.value === value && C.suit === suit),1);
-    if (currentHand.isFolded) {
-      board.discardedCards.push(cardToPlay);
-    } else {
-      board.playedCards.hero = cardToPlay;
-    }
-    //4. mark that villan played
-    currentHand.hasHeroPlayed = true;
-    this.setState({
-      board,
-      hero,
-      currentHand,
-    },()=> {
-      //if the villan card is already played I trigger the resolve hand
-      if (this.state.currentHand.hasVillanPlayed) {
-        setTimeout(()=> {
-          this.resolveHand();
-        },150); 
+    //Tell the socket server the card to play
+    window.socket.emit('play_a_card',{ 
+      token : this.state.token,
+      card : {
+        value,
+        suit,
       }
-    })
+    });
   }
 
   heroBetting(bet) {
@@ -658,39 +513,11 @@ class Game extends Component {
                 })
               }
             </div>
-            {/*<div className="Game-villanHand">
-            {
-                this.state.villan.hand.map((C,i) => {
-                  return <Card 
-                    key={`villan-h-${i}`}
-                    value={C.value}
-                    suit={C.suit}
-                    buttonText={this.state.currentHand.isFolded?`Discard me`:`Play me!`}
-                    onPlay={this.isMyCardInitiative('villan')?this.playAVillanCard:null}
-                  />
-                })
-              }
-            </div>*/}
             <div className="Game-villanStuff">
               <div className="Game-villanStuff__villanStats">
                   Opponent name: {this.state.villan.name} <br />
                   Chips: {this.state.villan.chips} <br />
               </div>
-              {/*<div className="Game-villanStuff__villanBets">
-                {this.isMyBettingInitiative('villan')?
-                  this.state.currentHand.bettingRound === 0 ?
-                    <React.Fragment> 
-                      <button onClick={() => {this.villanBetting(0)}}>Check</button>
-                      <button onClick={() => {this.villanBetting(10)}}>Bet 10</button>
-                    </React.Fragment> :
-                    <React.Fragment>
-                      <button onClick={() => {this.villanBetting(villanBettingDifference)}}>Call ({villanBettingDifference})</button>
-                      <button onClick={() => {this.villanBetting(villanBettingDifference+10)}}>Raise ({villanBettingDifference +10})</button>
-                      <button onClick={() => {this.villanBetting(villanBettingDifference+30)}}>Raise ({villanBettingDifference +30})</button>
-                      <button onClick={() => {this.villanFolding()}}>Fold</button>
-                    </React.Fragment>
-                  : null }
-              </div> */}
             </div>
           </div>
           <div className="Game-middleSection">

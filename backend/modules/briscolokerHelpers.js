@@ -70,13 +70,7 @@ const startTheGameWillYa = async (roomName, mongoClient) => {
   try {
     let game = await getMyGameByName(roomName, mongoClient);
     debug("game object", game);
-    game.board = {
-      playedCards : {
-        hero: null,
-        villan: null,
-      },
-      discardedCards : []
-    }
+    game.discardedCards = [];
     //update the players
     game.players[0].cardsCaptured = [];
     game.players[0].hand = [];
@@ -86,6 +80,7 @@ const startTheGameWillYa = async (roomName, mongoClient) => {
     game.players[0].initiative = false;
     game.players[0].currentHand = {
       bets : 0,
+      playedCard : null,
     };
     game.players[1].cardsCaptured = [];
     game.players[1].hand = [];
@@ -95,6 +90,7 @@ const startTheGameWillYa = async (roomName, mongoClient) => {
     game.players[1].initiative = false;
     game.players[1].currentHand = {
       bets : 0,
+      playedCard : null,
     };
     //deck
     game.deck = [];
@@ -131,8 +127,6 @@ const startTheGameWillYa = async (roomName, mongoClient) => {
         isBettingPhase: true,
         isFolded: false,
         pot:0,
-        hasHeroPlayed : false,
-        hasVillanPlayed : false,
         winner : null,
     }
     const gamesCollection = mongoClient.collection('games');
@@ -255,6 +249,46 @@ const betting = async (token, mongoClient, bet) => {
   await mongoDbHelpers.updateOneByObjectId(gamesCollection,ObjectId(game._id),game);
 }
 
+const playACard = async (token, mongoClient, card) => {
+
+  //get the game
+  debug("token",token);
+  debug("card", card);
+  let game = await getMyGameBro(token, mongoClient);
+  let hero = game.players.filter(P => {
+    return P.id === token
+  })[0];
+  let villan = game.players.filter(P => {
+    return P.id !== token
+  })[0];
+  let currentHand = game.currentHand;
+
+  //1, get the card that I want to play
+  let cardToPlay = hero.hand.filter(C => C.value === card.value && C.suit === card.suit)[0];
+  hero.hand.splice(hero.hand.findIndex(C => C.value === card.value && C.suit === card.suit),1);
+  if (currentHand.isFolded) {
+    game.discardedCards.push(cardToPlay);
+  } else {
+    hero.currentHand.playedCard = cardToPlay;
+  }
+
+  //2. switch the initiative
+  hero.initiative = false;
+  villan.initiative = true;
+
+  //3 save the state of the game into mongo
+  const gamesCollection = mongoClient.collection('games');
+  await mongoDbHelpers.updateOneByObjectId(gamesCollection,ObjectId(game._id),game);
+
+  //4 return game
+  return game;
+};
+
+const resolveHand = (mongoClient) => {
+  
+  
+}
+
 module.exports = {
   getMyGameBro,
   getVillan,
@@ -263,4 +297,5 @@ module.exports = {
   formatOutput,
   betting,
   sendAllTheGameStates,
+  playACard,
 }

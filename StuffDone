@@ -17,3 +17,12 @@ Day 10:
 - Table ready sends back the state of the match, it doesn't start it
 - We are passing the token as QS when connecting to the webSocket
 - The betting pahse is on the server now!
+- Playing card is now server side
+
+Known issue:
+- There is not side bet at the start of the round
+- The hand is not actually resolved - The code on the server is missing
+
+Todo:
+- Backend: resolving the hand
+- Backend: do the side bet at the start of the game

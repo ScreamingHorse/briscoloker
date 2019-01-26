@@ -30,6 +30,8 @@ const joinLobby = require('./modules/joinLobby');
 const tableReady = require('./modules/tableReady');
 const reconnectMe = require('./modules/reconnectMe');
 const betting = require('./modules/betting');
+const playACard = require('./modules/playACard');
+
 //API Modules
 const registerUser = require('./modules/registerUser');
 const loginUser = require('./modules/loginUser');
@@ -103,6 +105,13 @@ io.on('connection', (socket) => {
     debug('message for betting', payload);
     await betting(io, briscolokerMongoClient, payload.token, payload.bet);
   });
+
+  //the client send a message when the player plays a card
+  socket.on('play_a_card', async (payload) => {
+    debug('message for play_a_card', payload);
+    await playACard(io, briscolokerMongoClient, payload.token, payload.card);
+  });
+
 
 });
 
