@@ -10,3 +10,8 @@ Known issues:
 
 Todo:
 - Frontend: Delete the code for new game as it is now on the server
+
+Day 10:
+
+- Game is now craeted after both players joined the lobby (join_lobby)
+- Table ready sends back the state of the match, it doesn;t start it

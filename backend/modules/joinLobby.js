@@ -1,6 +1,7 @@
 const debug = require('debug')('briscoloker:joinLobby');
 const ObjectId = require("mongodb").ObjectID;
 const mongoDbHelpers = require('./mongoDbHelpers');
+const briscolokerHelpers = require('./briscolokerHelpers');
 
 module.exports = async (socket, io, mongoClient, token) => {
   debug("Need to join a room");
@@ -33,12 +34,17 @@ module.exports = async (socket, io, mongoClient, token) => {
       if (result) {
         //the game is ready, joining the socket.io room
         debug("Joining", roomToJoin.name);
-        socket.join(roomToJoin.name, ()=> {
+        socket.join(roomToJoin.name, async ()=> {
           debug("MATCH READY:",roomToJoin);
+          //before notifing the client, I'll start the game
+          //I need to start the game!
+          gameState = await briscolokerHelpers.startTheGameWillYa(roomToJoin.name, mongoClient);
+          debug(gameState);
           //notify the room (both sockets) that the game is ready to play
           setTimeout(() => {
-            io.to(roomToJoin.name).emit('match_ready', roomToJoin.name);
-            debug("Notification sent for the room", roomToJoin.name);
+            //the game is ready, notifi the 2 clients
+            io.to(roomToJoin.name).emit('match_ready');
+            //debug("Notification sent for the room", roomToJoin.name);
           }, 2000);
         });
       }
