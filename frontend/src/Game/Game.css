@@ -1,10 +1,8 @@
 .Game {
+  margin-left: 25px;
+  margin-top: 25px;
+  margin-right: 25px;
   text-align: center;
-}
-
-.Game-logo {
-  animation: Game-logo-spin infinite 20s linear;
-  height: 40vmin;
 }
 
 .Game-header {
@@ -29,15 +27,17 @@
 }
 
 .Game-villanCaptureCards {
-  border: 3px dashed red;
+  border: 0px dashed red;
   border-radius: 20px;
-  height: 140px;
-  display: flex;
-  align-items: center;
-  justify-content: left;
-  width: 450px;
+  /* height: 140px; */
+  display: -webkit-inline-box;
+  /* align-items: center; */
+  /* justify-content: left; */
+  width: 250px;
   overflow-x: scroll;
   overflow-y: hidden;
+  margin-top: 0px;
+  background-color: teal;
 }
 
 .Game-villanHand {
@@ -52,12 +52,13 @@
   height: 400px;
   display: flex;
   align-items: center;
+  border: 3px solid;
+  background-color: green;
 }
 
 .Game-middleSection__commonActions {
   flex-direction: column;
   display: flex;
-  margin-left: 60px;
 }
 
 .Game-middleSection__rubbishBin {
@@ -71,32 +72,37 @@
     flex-flow: wrap;
 }
 
+.Game-bottomBar {
+  display: flex
+}
+
 .Game-middleSection__commonActions___handPot,
 .Game-middleSection__commonActions___endScreen {
-  border: 5px dotted greenyellow;
-  border-radius: 50px;
+  border: 3px dotted greenyellow;
+  border-radius: 10px;
   background-color: green;
-  margin: 20px;
-  padding: 20px;
+  margin: 10px;
+  padding: 5px;
+  width: 245px;
 }
 
 .Game-heroStuff__heroBets,
 .Game-heroStuff__heroStats {
-  border: 5px dotted aquamarine;
-  border-radius: 40px;
+  border: 3px dotted aquamarine;
+  border-radius: 10px;
   background-color: blue;
   margin: 20px;
-  padding: 20px;
+  padding: 10px;
   color : white;
 }
 
 .Game-villanStuff__villanBets,
-.Game-villanStuff__villanStats {
-  border: 5px dotted red;
-  border-radius: 40px;
+.Game-middleSection__villanStats {
+  border: 3px dotted red;
+  border-radius: 10px;
   background-color: brown;
   margin: 20px;
-  padding: 20px;
+  padding: 10px;
 }
 
 .Game-heroCards {
@@ -106,15 +112,17 @@
 }
 
 .Game-heroCaptureCards {
-  border: 3px dashed rgb(0, 140, 255);
+  /*border: 1px dashed rgb(0, 140, 255);*/
   border-radius: 20px;
   height: 140px;
-  display: flex;
+  display: -webkit-inline-box;
   align-items: center;
   justify-content: left;
-  width: 450px;
+  width: 250px;
   overflow-x: scroll;
   overflow-y: hidden;
+  /*margin-top: 110px;*/
+  background-color: teal;
 }
 
 .Game-villanHand,
@@ -133,3 +141,13 @@
   flex-direction: column;
 }
 
+.Game-heroStuff__bottomBar {
+  border: 3px dotted aquamarine;
+  border-radius: 10px;
+  background-color: blue;
+  margin: 20px;
+  padding: 10px;
+  color: white;
+  height: 23px;
+  width: 300px;
+}

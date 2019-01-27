@@ -1,4 +1,4 @@
-const debug = require('debug')('briscoloker:betting');
+const debug = require('debug')('briscoloker:playACard');
 const briscolokerHelpers = require('./briscolokerHelpers');
 
 module.exports = async (io, mongoClient, token, card) => {
@@ -21,12 +21,17 @@ module.exports = async (io, mongoClient, token, card) => {
     //3 send the specifc game state to each player
     await briscolokerHelpers.sendAllTheGameStates(io, game.name, mongoClient);
     
-    //4 Check if the hand is ready to be solved (both player played a card)
-    debug(game.players[0].playedCard,game.players[1].playedCard);
-    if (game.players[0].playedCard !== null && game.players[1].playedCard !== null) {
+    //4 Check if the hand is ready to be solved 
+    // 4.1 : both player played a card and the hand is not folded
+    let notFoldedHandDone = !game.currentHand.isFolded && game.players[0].playedCard !== null && game.players[1].playedCard !== null;
+    debug('4.1',game.currentHand.isFolded, game.players[0].playedCard,game.players[1].playedCard, notFoldedHandDone);
+    // 4.2 : the hand is folded and both players have 2 cards in the hand
+    let foldedHandDone = game.currentHand.isFolded && game.players[0].hand.length === 2 && game.players[1].hand.length === 2;
+    debug('4.2',game.currentHand.isFolded, game.players[0].hand.length,game.players[1].hand.length, foldedHandDone);
+    if (notFoldedHandDone || foldedHandDone) {
       setTimeout(async()=>{
         //5 resolve the hand
-        briscolokerHelpers.resolveHand(mongoClient);
+        let [isTheRoundFinished,isTheGameFinished] = await briscolokerHelpers.resolveHand(game.name, mongoClient);
         //6 notify the clients
         await briscolokerHelpers.sendAllTheGameStates(io, game.name, mongoClient);
       },150);

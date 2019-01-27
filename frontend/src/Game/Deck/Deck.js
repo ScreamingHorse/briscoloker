@@ -15,12 +15,15 @@ class Deck extends Component {
     return (
       <div className="Deck">
         <div className="Deck-ActualDeck">
-          Card left {this.props.cardLeft}
+          <p className="Deck-ActualDeck__p">Card left {this.props.cardLeft} </p>
         </div>
         <Card 
           value={this.props.trumpCard.value}
           suit={this.props.trumpCard.suit}
         />
+        <div className="Deck-ActualDeck">
+          <p className="Deck-ActualDeck__p">Discarded cards {this.props.discardedCards}</p>
+        </div>
       </div>
     );
   }

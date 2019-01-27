@@ -13,7 +13,7 @@ Todo:
 
 Day 10:
 
-- Game is now craeted after both players joined the lobby (join_lobby)
+- Game is now created after both players joined the lobby (join_lobby)
 - Table ready sends back the state of the match, it doesn't start it
 - We are passing the token as QS when connecting to the webSocket
 - The betting pahse is on the server now!
@@ -26,3 +26,20 @@ Known issue:
 Todo:
 - Backend: resolving the hand
 - Backend: do the side bet at the start of the game
+
+Day 11:
+- Hand resolver
+- Sidebet at the start of the hand
+- Handle play cards if folded (push on discarded pile, don't show the discarded card on the board)
+- Not sending the list of the discarded card to the client, but only the ammount of them
+- Refactored betting
+- Redesign of the Table
+
+Known issues:
+- After creating a new match, it redirected to the lobby (only the 1st time after the login ?)
+- The winner of the first hand is wrong? If the 2 suits are not the same
+
+Todo:
+- Handle case where 2 'all-in's, if the first all in is bigger, when the second player calls all-in with less chips the bet need to be re-sized
+- Display the correct ammount of opponent cards
+

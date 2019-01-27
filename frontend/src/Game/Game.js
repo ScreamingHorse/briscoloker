@@ -11,9 +11,7 @@ class Game extends Component {
     this.resolveHand = this.resolveHand.bind(this);
     this.playAHeroCard = this.playAHeroCard.bind(this);
     this.heroBetting = this.heroBetting.bind(this);
-    this.villanBetting = this.villanBetting.bind(this);
     this.heroFolding = this.heroFolding.bind(this);
-    this.villanFolding = this.villanFolding.bind(this);
 
     /**
      * Values of the cards 1 -> 10
@@ -77,7 +75,7 @@ class Game extends Component {
     //All the topic we are listeing
     //This topic is used to receive the state of the game from the server
     window.socket.on('game_state',(data) => {
-      console.log('Message received from game state', data);
+      console.log('Message received from game state', data.result);
       if (data.result === false) {
         //there is no game for you bro
         this.props.history.push('/lobby');
@@ -119,14 +117,16 @@ class Game extends Component {
         currentHand.pot = remoteCurrentHand.pot;
         currentHand.bettingRound = remoteCurrentHand.bettingRound;
         currentHand.isBettingPhase = remoteCurrentHand.isBettingPhase;
+        currentHand.isFolded = remoteCurrentHand.isFolded;
         let board = Object.assign({}, this.state.board);
         board = {
           playedCards: {
             hero: remoteHero.currentHand.playedCard,
             villan: remoteVillan.currentHand.playedCard,
           },
-          discardedCards : []
+          discardedCards : data.result.discardedCards,
         };
+        let sideBet = data.result.sideBet;
 
         this.setState({
           villan,
@@ -135,6 +135,7 @@ class Game extends Component {
           cardLeft,
           currentHand,
           board,
+          sideBet,
         })
       }
     });
@@ -378,105 +379,12 @@ class Game extends Component {
     });
   }
   
-  villanFolding() {
-    //the villan is folding: 
-    let hero = Object.assign({},this.state.hero);
-    let currentHand = Object.assign({},this.state.currentHand);
-    //1. so the hero get all the money in the pot
-    hero.chips += currentHand.pot;
-    //2. mark the hand as folded
-    currentHand.isFolded = true;
-    currentHand.isBettingPhase = false;
-    //3. give away initiative
-    currentHand.initiative = 'villan';
-    //4. hero win the hand
-    currentHand.winner = 'hero';
-    this.setState({
-      currentHand,
-      hero,
-    });
-  }
-
   heroFolding() {
     //debugger
     //the hero is folding: 
-    let villan = Object.assign({},this.state.villan);
-    let currentHand = Object.assign({},this.state.currentHand);
-    //1. so the hero get all the money in the pot
-    villan.chips += currentHand.pot;
-    //2. mark the hand as folded
-    currentHand.isFolded = true;
-    currentHand.isBettingPhase = false;
-    //3. give away initiative
-    currentHand.initiative = 'hero';
-    //4. villan win the hand
-    currentHand.winner = 'villan';
-    this.setState({
-      currentHand,
-      villan,
+    window.socket.emit('fold',{ 
+      token : this.state.token,
     });
-  }
-
-  villanBetting(bet) {
-    //debugger
-    let villan = Object.assign({},this.state.villan);
-    let hero = Object.assign({},this.state.hero);
-    let currentHand = Object.assign({},this.state.currentHand);
-    //1. need to check if the villan has the money to bet
-    //   if not it is an all in
-    if (villan.chips < bet) {
-      //debugger
-      //1. Calculate the difference to the villan
-      let overBet = bet - villan.chips;
-      //2. size the bet to all the villans's money
-      bet = villan.chips;
-      //3. if the new bet covers what hero put into the pot
-      if ((currentHand.villanBets + bet) < currentHand.heroBets) {
-        //4.Hero is betting less then what villan did,
-        //meaning that he is calling an all in
-        hero.chips += overBet;
-        //4.update the current bet of the hero and the pot
-        currentHand.heroBets -= overBet;
-        currentHand.pot -= overBet;
-      }
-    } else {
-      //hero is without money, he is all in some how
-      //if he put more money on the pot, need to match
-      //I assume an overbet by the villan
-      if (hero.chips === 0 && currentHand.heroBets >= currentHand.villanBets) {
-        //need to resize the her bet
-        bet = currentHand.heroBets - currentHand.villanBets;
-      }
-    }
-    //2. spend the villan money
-    villan.chips -= bet;
-    currentHand.pot += bet;
-    currentHand.villanBets +=bet;
-    //3. give away the initiave 
-    currentHand.initiative = 'hero';
-    //4. check if the betting round is over
-    if (currentHand.villanBets === currentHand.heroBets && !(currentHand.bettingRound ===0)) {
-      currentHand.isBettingPhase = false;
-      //if the round ends, villan get the card initiave
-      //currentHand.initiative = 'villan';
-    }
-    //5. bump the betting round
-    currentHand.bettingRound ++;
-    //6. Check if the hero still have money
-    //if (villan.chips === 0) {
-      //no money = no more bets
-    //  currentHand.isBettingPhase = false;
-    //}
-    //check if hero has still anything left
-    //if not end the betting phase
-    if (hero.chips === 0) {
-      currentHand.bettingPhase = false;
-    }
-    this.setState({
-      villan,
-      currentHand,
-      hero,
-    })
   }
 
   isMyBettingInitiative(player) {
@@ -496,57 +404,75 @@ class Game extends Component {
   }
 
   render() {
-    const villanBettingDifference = this.state.currentHand.heroBets - this.state.currentHand.villanBets;
     const heroBettingDifference = this.state.currentHand.villanBets - this.state.currentHand.heroBets;
     return (
       <div className="Game">
         <section className="Game-Board">
-          <div className="Game-villanCards">
-            <div className="Game-villanCaptureCards">
-              {
-                this.state.villan.cardsCaptured.map((C,i) => {
-                  return <Card
-                    key={`villan-cc-${i}`}
-                    value={C.value}
-                    suit={C.suit}
-                  />
-                })
-              }
-            </div>
-            <div className="Game-villanStuff">
-              <div className="Game-villanStuff__villanStats">
-                  Opponent name: {this.state.villan.name} <br />
-                  Chips: {this.state.villan.chips} <br />
-              </div>
-            </div>
-          </div>
           <div className="Game-middleSection">
-            <div className="Game-middleSection__rubbishBin">
-              {
-                  this.state.board.discardedCards.map((C,i) => {
-                    return <Card 
-                      key={`discarded-cc-${i}`}
+            <Deck 
+              trumpCard = {this.state.trumpCard}
+              deck = {this.state.deck}
+              cardLeft = {this.state.cardLeft}
+              discardedCards = {this.state.board.discardedCards}
+            />
+            <Board 
+              board = {this.state.board}
+              winnerOfTheWholeThing = {this.state.winnerOfTheWholeThing}
+              heroHand = {this.state.hero.hand}
+              isFolded = {this.state.currentHand.isFolded}
+              isMyCardInitiative = {this.isMyCardInitiative('hero')}
+              playAHeroCard = {this.playAHeroCard}
+              villanHand = {3}
+            />
+            <div className="Game-middleSection__commonActions">
+              <div className="Game-middleSection__villanStats">
+                    Opponent name: {this.state.villan.name} <br />
+                    Chips: {this.state.villan.chips} <br />
+                </div>
+              <div className="Game-villanCaptureCards">
+                {
+                  this.state.villan.cardsCaptured.map((C,i) => {
+                    return <Card
+                      key={`villan-cc-${i}`}
                       value={C.value}
                       suit={C.suit}
                     />
                   })
                 }
+              </div>
+              <div className="Game-heroCaptureCards">
+                {
+                  this.state.hero.cardsCaptured.map((C,i) => {
+                    return <Card 
+                      key={`hero-cc-${i}`}
+                      value={C.value}
+                      suit={C.suit}
+                    />
+                  })
+                }
+              </div>
+              <div className="Game-heroStuff__heroStats">
+                Hero chips: {this.state.hero.chips} <br />
+              </div>
             </div>
-            <Deck 
-              trumpCard = {this.state.trumpCard}
-              deck = {this.state.deck}
-              cardLeft = {this.state.cardLeft}
-            />
-            <Board 
-              board = {this.state.board}
-              winnerOfTheWholeThing = {this.state.winnerOfTheWholeThing}
-            />
-            <div className="Game-middleSection__commonActions">
-              <button onClick={this.newGame}>Start a new game</button>
-              <div>{`Round leader ${this.state.currentHand.roundLeader}`}</div>
-              <div>{`Initiative ${this.state.currentHand.initiative}`}</div>
-              <div>{`isBettingPhase ${this.state.currentHand.isBettingPhase.toString()}`}</div>
-              <div className="Game-middleSection__commonActions___handPot">
+          </div>
+          <div className="Game-bottomBar">
+            <div className="Game-heroStuff__bottomBar">
+              {this.isMyBettingInitiative('hero')?
+                this.state.currentHand.bettingRound === 0 ?
+                  <React.Fragment> 
+                    <button onClick={() => {this.heroBetting(0)}}>Check</button>
+                    <button onClick={() => {this.heroBetting(10)}}>Bet 10</button>
+                  </React.Fragment> :
+                  <React.Fragment>
+                    <button onClick={() => {this.heroBetting(heroBettingDifference)}}>Call {heroBettingDifference}</button>
+                    <button onClick={() => {this.heroBetting(heroBettingDifference+10)}}>Raise {heroBettingDifference +10}</button>
+                    <button onClick={() => {this.heroBetting(heroBettingDifference+30)}}>Raise ({heroBettingDifference +30})</button>
+                    <button onClick={() => {this.heroFolding()}}>Fold</button>
+                  </React.Fragment>
+                : null }
+            </div>
+            <div className="Game-middleSection__commonActions___handPot">
                 Bets: <br />
                 Opp: {this.state.currentHand.villanBets} <br />
                 Hero: {this.state.currentHand.heroBets} <br />
@@ -563,53 +489,6 @@ class Game extends Component {
                   </React.Fragment>
                 : null }
               </div>
-            </div>
-          </div>
-          <div className="Game-heroCards">
-            <div className="Game-heroCaptureCards">
-              {
-                this.state.hero.cardsCaptured.map((C,i) => {
-                  return <Card 
-                    key={`hero-cc-${i}`}
-                    value={C.value}
-                    suit={C.suit}
-                  />
-                })
-              }
-            </div>
-            <div className="Game-heroHand">
-              {
-                this.state.hero.hand.map((C,i) => {
-                  return <Card 
-                    key={`hero-h-${i}`}
-                    value={C.value}
-                    suit={C.suit}
-                    buttonText={this.state.currentHand.isFolded?`Discard me`:`Play me!`}
-                    onPlay={this.isMyCardInitiative('hero')?this.playAHeroCard:null}
-                  />
-                })
-              }
-            </div>
-            <div className="Game-heroStuff">
-              <div className="Game-heroStuff__heroBets">
-                {this.isMyBettingInitiative('hero')?
-                  this.state.currentHand.bettingRound === 0 ?
-                    <React.Fragment> 
-                      <button onClick={() => {this.heroBetting(0)}}>Check</button>
-                      <button onClick={() => {this.heroBetting(10)}}>Bet 10</button>
-                    </React.Fragment> :
-                    <React.Fragment>
-                      <button onClick={() => {this.heroBetting(heroBettingDifference)}}>Call {heroBettingDifference}</button>
-                      <button onClick={() => {this.heroBetting(heroBettingDifference+10)}}>Raise {heroBettingDifference +10}</button>
-                      <button onClick={() => {this.heroBetting(heroBettingDifference+30)}}>Raise ({heroBettingDifference +30})</button>
-                      <button onClick={() => {this.heroFolding()}}>Fold</button>
-                    </React.Fragment>
-                  : null }
-                </div>
-                <div className="Game-heroStuff__heroStats">
-                    Hero chips: {this.state.hero.chips} <br />
-                </div>
-            </div>
           </div>
         </section>
       </div>

@@ -6,6 +6,18 @@
   border-radius: 10px;
   background-image: url("carte-romagnole-back-crop.jpg");
   color: white;
+  transform: rotate(90deg);
+  margin: 0px;
+  margin-top: -40px;
+  margin-bottom: -40px;
+}
+
+.Deck-ActualDeck__p {
+  transform: rotate(270deg);
+  margin-top: 105px;
+  margin-left: -75px;
+  color: beige;
+  font-weight: bold;
 }
 
 .Deck {

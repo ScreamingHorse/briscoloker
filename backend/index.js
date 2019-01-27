@@ -31,6 +31,7 @@ const tableReady = require('./modules/tableReady');
 const reconnectMe = require('./modules/reconnectMe');
 const betting = require('./modules/betting');
 const playACard = require('./modules/playACard');
+const fold = require('./modules/fold');
 
 //API Modules
 const registerUser = require('./modules/registerUser');
@@ -79,7 +80,7 @@ app.post('/register', async (req, res) => {
 
 io.on('connection', (socket) => {
   debug('a user is connected', socket.id);
-  console.log("Query string of the socket",socket.handshake.query);
+  debug("Query string of the socket",socket.handshake.query);
   socket.token = socket.handshake.query.token;
   //triggered on reconnection
   socket.on('reconnect_me',async (payload)=>{
@@ -104,6 +105,12 @@ io.on('connection', (socket) => {
   socket.on('betting', async (payload) => {
     debug('message for betting', payload);
     await betting(io, briscolokerMongoClient, payload.token, payload.bet);
+
+  });
+  //the client send a message when the player folds
+  socket.on('fold', async (payload) => {
+    debug('message for fold', payload);
+    await fold(io, briscolokerMongoClient, payload.token);
   });
 
   //the client send a message when the player plays a card
@@ -111,7 +118,6 @@ io.on('connection', (socket) => {
     debug('message for play_a_card', payload);
     await playACard(io, briscolokerMongoClient, payload.token, payload.card);
   });
-
 
 });
 

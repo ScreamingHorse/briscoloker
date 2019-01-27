@@ -1,11 +1,24 @@
 .Board {
   display: flex;
-  border: 3px dashed red;
-  border-radius: 20px;
-  width: 350px;
   align-items: center;
   justify-content: center;
-  margin-left: 150px;
+  margin-left: 100px;
   flex-direction: column;
-  height: 350px;
+}
+
+.Board-villanHand {
+  background-image: url("carte-romagnole-back-crop.jpg");
+  background-color: brown;
+  height: 99px;
+  width: 65px;
+  margin: 5px;
+  border-radius: 10px;
+  border: 1px solid;
+  background-size: 100%;
+}
+
+.Board-playedCards {
+  display: flex;
+  height: 150px;
+  align-items: center;
 }
