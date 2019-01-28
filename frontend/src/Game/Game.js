@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import './Game.css';
-import Card from './Card/Card';
 import Deck from './Deck/Deck';
 import Board from './Board/Board';
+import CapturedCards from './CapturedCards/CapturedCards';
 
 class Game extends Component {
 
@@ -67,8 +67,9 @@ class Game extends Component {
           hero: null,
           villan: null,
         },
-        discardedCards : []
+        discardedCards : [],
       },
+      gameState: {},
     };
     //Tell the socket server that the game UI is ready
     window.socket.emit('table_ready',{ token });
@@ -128,7 +129,7 @@ class Game extends Component {
           discardedCards : data.result.discardedCards,
         };
         let sideBet = data.result.sideBet;
-
+        let gameState = data.result.gameState;
         this.setState({
           villan,
           hero,
@@ -137,6 +138,7 @@ class Game extends Component {
           currentHand,
           board,
           sideBet,
+          gameState,
         })
       }
     });
@@ -415,47 +417,26 @@ class Game extends Component {
               deck = {this.state.deck}
               cardLeft = {this.state.cardLeft}
               discardedCards = {this.state.board.discardedCards}
+              isTheRoundFinished = {this.state.gameState.isTheRoundFinished}
+              gameRound = {this.state.gameState.round}
             />
             <Board 
               board = {this.state.board}
-              winnerOfTheWholeThing = {this.state.winnerOfTheWholeThing}
               heroHand = {this.state.hero.hand}
               isFolded = {this.state.currentHand.isFolded}
               isMyCardInitiative = {this.isMyCardInitiative('hero')}
               playAHeroCard = {this.playAHeroCard}
               villanCardsInHand = {this.state.villan.cardsInHand}
+              isTheRoundFinished = {this.state.gameState.isTheRoundFinished}
+              isTheGameFinished = {this.state.gameState.isTheGameFinished}
+              lastRoundWinner = {this.state.gameState.lastRoundWinner}
+              winnerOfTheWholeThing = {this.state.gameState.winnerOfTheWholeThing}
             />
-            <div className="Game-middleSection__commonActions">
-              <div className="Game-middleSection__villanStats">
-                    Opponent name: {this.state.villan.name} <br />
-                    Chips: {this.state.villan.chips} <br />
-                </div>
-              <div className="Game-villanCaptureCards">
-                {
-                  this.state.villan.cardsCaptured.map((C,i) => {
-                    return <Card
-                      key={`villan-cc-${i}`}
-                      value={C.value}
-                      suit={C.suit}
-                    />
-                  })
-                }
-              </div>
-              <div className="Game-heroCaptureCards">
-                {
-                  this.state.hero.cardsCaptured.map((C,i) => {
-                    return <Card 
-                      key={`hero-cc-${i}`}
-                      value={C.value}
-                      suit={C.suit}
-                    />
-                  })
-                }
-              </div>
-              <div className="Game-heroStuff__heroStats">
-                Hero chips: {this.state.hero.chips} <br />
-              </div>
-            </div>
+            <CapturedCards
+              villan = {this.state.villan}
+              hero = {this.state.hero}
+              isTheRoundFinished = {this.state.gameState.isTheRoundFinished}
+            />
           </div>
           <div className="Game-bottomBar">
             <div className="Game-heroStuff__bottomBar">

@@ -22,3 +22,18 @@
   height: 150px;
   align-items: center;
 }
+
+.Board-endGameCard {
+  margin: 10px;
+  border: 2px dotted #993333;
+  background-color: #339933;
+  padding: 20px;
+  border-radius: 25px;
+}
+.Board-endOfRoundCard {
+  margin: 10px;
+  border: 2px dotted #993333;
+  background-color: #339933;
+  padding: 20px;
+  border-radius: 25px;
+}

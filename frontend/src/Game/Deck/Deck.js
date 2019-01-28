@@ -14,16 +14,23 @@ class Deck extends Component {
   render() {
     return (
       <div className="Deck">
-        <div className="Deck-ActualDeck">
-          <p className="Deck-ActualDeck__p">Card left {this.props.cardLeft} </p>
-        </div>
-        <Card 
-          value={this.props.trumpCard.value}
-          suit={this.props.trumpCard.suit}
-        />
-        <div className="Deck-ActualDeck">
-          <p className="Deck-ActualDeck__p">Discarded cards {this.props.discardedCards}</p>
-        </div>
+        {this.props.isTheRoundFinished ? null :
+          <React.Fragment>
+            <div className="Deck-gameRound">
+            Round {this.props.gameRound}
+            </div>
+            <div className="Deck-ActualDeck">
+              <p className="Deck-ActualDeck__p">Card left {this.props.cardLeft} </p>
+            </div>
+            <Card 
+              value={this.props.trumpCard.value}
+              suit={this.props.trumpCard.suit}
+            />
+            <div className="Deck-ActualDeck">
+              <p className="Deck-ActualDeck__p">Discarded cards {this.props.discardedCards}</p>
+            </div>
+          </React.Fragment>
+        }
       </div>
     );
   }

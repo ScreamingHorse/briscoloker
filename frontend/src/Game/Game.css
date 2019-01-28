@@ -34,10 +34,10 @@
   /* align-items: center; */
   /* justify-content: left; */
   width: 250px;
-  overflow-x: scroll;
+  overflow-x: auto;
   overflow-y: hidden;
   margin-top: 0px;
-  background-color: teal;
+  background-color:#339933;
 }
 
 .Game-villanHand {
@@ -119,10 +119,10 @@
   align-items: center;
   justify-content: left;
   width: 250px;
-  overflow-x: scroll;
+  overflow-x: auto;
   overflow-y: hidden;
   /*margin-top: 110px;*/
-  background-color: teal;
+  background-color:#339933;
 }
 
 .Game-villanHand,

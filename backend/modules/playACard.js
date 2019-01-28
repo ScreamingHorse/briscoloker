@@ -32,8 +32,20 @@ module.exports = async (io, mongoClient, token, card) => {
       setTimeout(async()=>{
         //5 resolve the hand
         let [isTheRoundFinished,isTheGameFinished] = await briscolokerHelpers.resolveHand(game.name, mongoClient);
-        //6 notify the clients
+        debug("isTheRoundFinished", isTheRoundFinished);
+        debug("isTheGameFinished", isTheGameFinished);
+        //6 notify the clients, the client display the message that a new round is starting
         await briscolokerHelpers.sendAllTheGameStates(io, game.name, mongoClient);
+        //if the round is finished, wait few moments, then start the next round
+        if (isTheRoundFinished && !isTheGameFinished) {
+          setTimeout(async()=>{
+            debug('timer done!');
+            //7 create a new game
+            await briscolokerHelpers.startTheGameWillYa(game.name, mongoClient);
+            //8 send the new state to the clients
+            await briscolokerHelpers.sendAllTheGameStates(io, game.name, mongoClient);
+          }, 1500);
+        }
       },150);
     }
   } catch (e) {

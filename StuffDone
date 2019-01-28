@@ -45,3 +45,13 @@ Todo:
 
 Day 12:
 - Display the right number of cards in the opponent hand
+- Moved few briscolokerHelpers on their own module (Socket.Io)
+- Display on the frontend when the round is finished
+- Display the end screen when the game ends!
+- Handle back to lobby after game ended
+
+Kwon issue:
+- The betting bug for all in is back
+
+ToDo:
+- Handle completed game, archive them somewhere

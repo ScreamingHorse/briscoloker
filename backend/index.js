@@ -84,26 +84,26 @@ io.on('connection', (socket) => {
   socket.token = socket.handshake.query.token;
   //triggered on reconnection
   socket.on('reconnect_me',async (payload)=>{
-    debug('message for reconnect_me payload', payload);
+    console.log('message for reconnect_me payload', payload);
     await reconnectMe(socket, briscolokerMongoClient, payload.token);
   });
 
   //triggered when the browser goes to /game
   socket.on('table_ready',async (payload)=>{
-    debug('message for table_ready payload', payload);
+    console.log('message for table_ready payload', payload);
     await tableReady(socket, briscolokerMongoClient, payload.token);
   })
 
   ///triggerred when the player press play
   socket.on('join_lobby', async (payload) => {
     //@todo: validate the tokens
-    debug('message for join_lobby', payload);
+    console.log('message for join_lobby', payload);
     await joinLobby(socket, io, briscolokerMongoClient, payload.token);
   });
 
   //the client send a message when the player is betting
   socket.on('betting', async (payload) => {
-    debug('message for betting', payload);
+    console.log('message for betting', payload);
     await betting(io, briscolokerMongoClient, payload.token, payload.bet);
 
   });
@@ -115,7 +115,7 @@ io.on('connection', (socket) => {
 
   //the client send a message when the player plays a card
   socket.on('play_a_card', async (payload) => {
-    debug('message for play_a_card', payload);
+    console.log('message for play_a_card', payload);
     await playACard(io, briscolokerMongoClient, payload.token, payload.card);
   });
 
