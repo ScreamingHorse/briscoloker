@@ -43,3 +43,5 @@ Todo:
 - Handle case where 2 'all-in's, if the first all in is bigger, when the second player calls all-in with less chips the bet need to be re-sized
 - Display the correct ammount of opponent cards
 
+Day 12:
+- Display the right number of cards in the opponent hand

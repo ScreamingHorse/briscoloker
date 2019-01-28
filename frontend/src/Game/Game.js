@@ -97,6 +97,7 @@ class Game extends Component {
         villan.hand = [];
         villan.score = remoteVillan.score;
         villan.chips = remoteVillan.chips;
+        villan.cardsInHand = remoteVillan.cardsInHand;
 
         hero.cardsCaptured = remoteHero.cardsCaptured;
         hero.hand = remoteHero.hand;
@@ -422,7 +423,7 @@ class Game extends Component {
               isFolded = {this.state.currentHand.isFolded}
               isMyCardInitiative = {this.isMyCardInitiative('hero')}
               playAHeroCard = {this.playAHeroCard}
-              villanHand = {3}
+              villanCardsInHand = {this.state.villan.cardsInHand}
             />
             <div className="Game-middleSection__commonActions">
               <div className="Game-middleSection__villanStats">

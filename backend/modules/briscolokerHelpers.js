@@ -183,6 +183,7 @@ const formatOutput = async (token, mongoClient) => {
       initiative : villan.initiative,
       cardsCaptured : villan.cardsCaptured,
       currentHand : villan.currentHand,
+      cardsInHand : villan.hand.length,
     },
     hero : hero,
     discardedCards : game.discardedCards.length,

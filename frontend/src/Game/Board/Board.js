@@ -4,7 +4,10 @@ import Card from '../Card/Card';
 
 class Board extends Component {
   render() {
-    //console.log(this.props);
+    let villanCards = [];
+    for (var idx = 0; idx < this.props.villanCardsInHand; idx ++) {
+      villanCards.push(true);
+    }
     return (
       <div className="Board">
         {this.props.winnerOfTheWholeThing !== null?
@@ -13,12 +16,11 @@ class Board extends Component {
           </React.Fragment>
         : <React.Fragment>
           <div className="Game-heroHand">
-            <div className="Board-villanHand">
-            </div>
-            <div className="Board-villanHand">
-            </div>
-            <div className="Board-villanHand">
-            </div>
+            {
+              villanCards.map(t => {
+                return <div className="Board-villanHand"></div>
+              })
+            }
           </div>
           <div className="Board-playedCards">
             {this.props.board.playedCards.villan !== null ?
