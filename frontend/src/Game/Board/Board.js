@@ -1,14 +1,19 @@
 import React, { Component } from 'react';
 import './Board.css';
 import Card from '../Card/Card';
+import { Link } from "react-router-dom";
 
 class Board extends Component {
 
   endGameCard = () => {
     return (
-    <div className="Board-endGameCard">
-      THE WINNER OF THEM ALL IS: {this.props.winnerOfTheWholeThing}
-    </div>
+      <React.Fragment>
+        <div className="Board-endGameCard">
+          THE WINNER OF THEM ALL IS: {this.props.winnerOfTheWholeThing} <br />
+          Go back to the <Link to="/lobby">lobby</Link> for more games!
+        </div>
+        
+      </React.Fragment>
     )};
   
   endOfRoundCard = () => { 
