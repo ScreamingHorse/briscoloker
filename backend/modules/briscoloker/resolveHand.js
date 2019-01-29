@@ -87,6 +87,7 @@ module.exports = async (gameName, mongoClient) => {
         roundWinner = 'villan';
       }
     }
+    let roundWinnerName = '';
     //add the card to the captured card
     if(roundWinner === 'hero') {//player_1 index 0
       player1.cardsCaptured.push(heroCard);
@@ -97,6 +98,7 @@ module.exports = async (gameName, mongoClient) => {
       player1.initiative = true;
       player2.roundLeader = false;
       player2.initiative = false;
+      roundWinnerName = player1.name;
     } else {//player_2 index 1
       player2.cardsCaptured.push(heroCard);
       player2.cardsCaptured.push(villanCard);
@@ -106,26 +108,41 @@ module.exports = async (gameName, mongoClient) => {
       player2.initiative = true;
       player1.roundLeader = false;
       player1.initiative = false;
+      roundWinnerName = player2.name;
     }
+    let handScore = scoreMapper[heroCard.value -1] + scoreMapper[villanCard.value -1];
     //calculating the current score for the players
     game.players.forEach(P => {
       let score = 0;
       P.cardsCaptured.forEach(C => {
-        score += scoreMapper[C.value -1]
+        score += scoreMapper[C.value -1];
       });
       P.score = score;
     });
+    
+    game.logs.push({
+      time : new Date().getTime(),
+      log : `${roundWinnerName} won the hand for ${currentHand.pot} and ${handScore} points`,
+    });
+
   } else {
     //the hand is folded
+    let roundWinnerName = '';
     if (player1.id === currentHand.winner) {
       winner = 'hero';
       player1.chips += currentHand.pot;
+      roundWinnerName = player1.name;
     } else {
       winner = 'villan';
       player2.chips += currentHand.pot;
+      roundWinnerName = player2.name;
     }
-    //winner = currentHand.winner;
+    game.logs.push({
+      time : new Date().getTime(),
+      log : `${roundWinnerName} won the hand for ${currentHand.pot}`,
+    });
   }
+  //Log the hand
   //picking the new card
   if(roundWinner === 'hero') { //player_1
     //Pick a new card for each one Hero goes first);
@@ -169,7 +186,7 @@ module.exports = async (gameName, mongoClient) => {
   //check if the game is still on
   let cardsPlayed = player1.cardsCaptured.length + player2.cardsCaptured.length + game.discardedCards.length;
   debug('cardsPlayed', cardsPlayed);
-  if (cardsPlayed === 40) {
+  if (cardsPlayed === 10) {
     debug("Game finished",player1.score, player2.score);
     game.isTheRoundFinished = true;
     //assign the sideBet
@@ -178,6 +195,10 @@ module.exports = async (gameName, mongoClient) => {
       player1.chips += game.sideBet;
       player2.chips += game.sideBet;
       game.lastRoundWinner = 'This round was a tie!';
+      game.logs.push({
+        time : new Date().getTime(),
+        log : `Last round was a tie, each player recived ${game.sideBet}`,
+      });
     } else if (player1.score > player2.score) {
       debug('player_1 won');
       player1.chips += game.sideBet * 2;
@@ -185,6 +206,10 @@ module.exports = async (gameName, mongoClient) => {
         game.gameWinner = player1;
       }
       game.lastRoundWinner = `The winner is ${player1.name}!`;
+      game.logs.push({
+        time : new Date().getTime(),
+        log : `${player1.name} won for ${game.sideBet * 2}`,
+      });
     } else {
       debug('player_2 won');
       player2.chips += game.sideBet * 2;
@@ -192,6 +217,10 @@ module.exports = async (gameName, mongoClient) => {
         game.gameWinner = player2;
       }
       game.lastRoundWinner = `The winner is ${player2.name}!`;
+      game.logs.push({
+        time : new Date().getTime(),
+        log : `${player2.name} won for ${game.sideBet * 2}`,
+      });
     }
   }
   debug('currentHand',currentHand);

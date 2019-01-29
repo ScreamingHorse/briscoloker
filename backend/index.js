@@ -79,9 +79,10 @@ app.post('/register', async (req, res) => {
 })
 
 io.on('connection', (socket) => {
-  debug('a user is connected', socket.id);
+  console.log('a user is connected', socket.id);
   debug("Query string of the socket",socket.handshake.query);
   socket.token = socket.handshake.query.token;
+
   //triggered on reconnection
   socket.on('reconnect_me',async (payload)=>{
     console.log('message for reconnect_me payload', payload);
@@ -109,7 +110,7 @@ io.on('connection', (socket) => {
   });
   //the client send a message when the player folds
   socket.on('fold', async (payload) => {
-    debug('message for fold', payload);
+    console.log('message for fold', payload);
     await fold(io, briscolokerMongoClient, payload.token);
   });
 

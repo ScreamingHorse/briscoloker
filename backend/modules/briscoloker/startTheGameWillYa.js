@@ -35,7 +35,7 @@ module.exports = async (roomName, mongoClient) => {
     //Everything is reset
     //Step 1: Build the deck
     //cycling the suits (0->3)
-    for (var s = 0; s < 4; s++) {
+    for (var s = 0; s < 1; s++) {
       //values (1 -> 10)
       for (var v = 1; v <= 10; v++) {
         game.deck.push({
@@ -79,7 +79,14 @@ module.exports = async (roomName, mongoClient) => {
     });
     game.players[0].chips -= game.sideBet;
     game.players[1].chips -= game.sideBet;
-
+    game.logs.push({
+      time : new Date().getTime(),
+      log : `The round is ready!`
+    });
+    game.logs.push({
+      time : new Date().getTime(),
+      log : `${game.players[game.roundLeader].name} goes first`
+    });
     const gamesCollection = mongoClient.collection('games');
     await mongoDbHelpers.updateOneByObjectId(gamesCollection,ObjectId(game._id),game);
     return true;

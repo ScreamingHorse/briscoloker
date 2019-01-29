@@ -31,6 +31,7 @@ class Game extends Component {
       token : token,
       isGameFinished : false,
       gameWinner: '',
+      logs : [],
       currentHand: {
         roundLeader : '',
         initiative : '',
@@ -75,8 +76,10 @@ class Game extends Component {
     //All the topic we are listeing
     //This topic is used to receive the state of the game from the server
     window.socket.on('game_state',(data) => {
+      //debugger
       console.log('Message received from game state', data.result);
       if (data.result === false) {
+        //debugger
         //there is no game for you bro
         this.props.history.push('/lobby');
       } else {
@@ -129,7 +132,9 @@ class Game extends Component {
         };
         let sideBet = data.result.sideBet;
         let gameState = data.result.gameState;
+        let logs = data.result.logs;
         this.setState({
+          logs,
           villan,
           hero,
           trumpCard,
@@ -251,21 +256,29 @@ class Game extends Component {
                 : null }
             </div>
             <div className="Game-middleSection__commonActions___handPot">
-                Bets: <br />
-                Opp: {this.state.currentHand.villanBets} <br />
-                Hero: {this.state.currentHand.heroBets} <br />
-                Total hand: {this.state.currentHand.pot} <br />
-              </div>
-              <div className="Game-middleSection__commonActions___endScreen">
-                Score: <br />
-                Opp: {this.state.villan.score} <br />
-                Hero: {this.state.hero.score} <br />
-                Side bet: {this.state.sideBet * 2} <br />
-                {this.state.isGameFinished ?
-                  <React.Fragment>
-                    {this.state.gameWinner}
-                  </React.Fragment>
-                : null }
+                <div>
+                  Bets: <br />
+                  Opp: {this.state.currentHand.villanBets} <br />
+                  Hero: {this.state.currentHand.heroBets} <br />
+                  Total hand: {this.state.currentHand.pot} <br />
+                </div>
+                <div>
+                  Score: <br />
+                  Opp: {this.state.villan.score} <br />
+                  Hero: {this.state.hero.score} <br />
+                  Side pot: {this.state.sideBet * 2} <br />
+                </div>
+            </div>
+              <div className="Game-middleSection__commonActions___logger">
+                {this.state.logs
+                  .sort((L1,L2) => {
+                    if (L1.time > L2.time) return -1
+                      else return 1 
+                  })
+                  .map(L => {
+                  return <span>{new Date(L.time).toLocaleDateString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'})} - {L.log}</span>
+                  })
+                }
               </div>
           </div>
         </section>

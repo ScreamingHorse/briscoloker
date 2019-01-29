@@ -23,6 +23,10 @@ module.exports = async (socket, io, mongoClient, token) => {
         //2. Update the room object with the current socket ID
         //2.1 Get user info from DB
         let user = await mongoDbHelpers.getStuffFromMongo(usersCollecion,{_id:ObjectId(token)},{},1);
+        roomToJoin.logs.push({
+          time : new Date().getTime(),
+          log : `${user[0].username} joined the game`
+        });
         roomToJoin.players.push({
           id : token,
           name : user[0].username,
@@ -57,6 +61,12 @@ module.exports = async (socket, io, mongoClient, token) => {
       roomObject = {
         name : roomName,
         created : new Date(),
+        logs : [
+          {
+            time : new Date().getTime(),
+            log : `${user[0].username} created the game`
+          }
+        ],
         players : [
           {
             id : token,

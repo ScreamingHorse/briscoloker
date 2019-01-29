@@ -50,8 +50,18 @@ Day 12:
 - Display the end screen when the game ends!
 - Handle back to lobby after game ended
 
-Kwon issue:
+Known issue:
 - The betting bug for all in is back
 
 ToDo:
 - Handle completed game, archive them somewhere
+
+Day 13
+- Fixed a typo in betting, might fix the all in bug
+
+
+Known issue:
+- After creating a new match, it redirected to the lobby:
+  1 instance is when there are more then one game for a user
+- Always wait for the MongoDB to be connected
+- Random generate the gameRoom name (joinLobby.js)
