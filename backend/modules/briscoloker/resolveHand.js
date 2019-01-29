@@ -169,7 +169,7 @@ module.exports = async (gameName, mongoClient) => {
   //check if the game is still on
   let cardsPlayed = player1.cardsCaptured.length + player2.cardsCaptured.length + game.discardedCards.length;
   debug('cardsPlayed', cardsPlayed);
-  if (cardsPlayed === 10) {
+  if (cardsPlayed === 40) {
     debug("Game finished",player1.score, player2.score);
     game.isTheRoundFinished = true;
     //assign the sideBet
