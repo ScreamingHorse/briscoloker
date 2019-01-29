@@ -83,7 +83,7 @@ module.exports = async (token, mongoClient, bet) => {
   //6. check if villan has still anything left
   //if not end the betting phase
   if (villan.chips === 0 || hero.chips === 0) {
-    currentHand.bettingPhase = false;
+    currentHand.isBettingPhase = false;
   }
   //7 save the state of the game into mongo
   const gamesCollection = mongoClient.collection('games');
