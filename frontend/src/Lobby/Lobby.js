@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Modal } from 'react-modal-button';
 import './Lobby.css';
 
 class Lobby extends Component {
@@ -50,22 +51,21 @@ class Lobby extends Component {
     return (
       <div className="Lobby">
       {this.state.isSearching ?
-        <div>
+        <Modal isOpen={true}>
           Looking for a game, please be patient while we are looking for an oppenent.
           Searching for {this.state.searchTime} seconds
-        </div>
+        </Modal>
       : null
       }
       {this.state.isRoomReady ?
-        <div>
+        <Modal isOpen={true}>
           Get ready to play, the game is starting shortly
-        </div>
+        </Modal>
       : null
       }
       {!this.state.isSearching && !this.state.isRoomReady ?
-      <button onClick={this.handlePlay}>Play!</button> : null
+      <button onClick={this.handlePlay} className="playButton" style={{height:window.innerHeight}}>Play!</button> : null
       }
-        
       </div>
     );
   }
