@@ -1,7 +1,7 @@
-const debug = require("debug")('briscoloker:briscolokerHelpers:resolveHand');
+const debug = require('debug')('briscoloker:briscolokerHelpers:resolveHand');
+const ObjectId = require('mongodb').ObjectID;
 const mongoDbHelpers = require('../mongoDbHelpers');
-const ObjectId = require("mongodb").ObjectID;
-const getMyGameByName = require("./getMyGameByName");
+const getMyGameByName = require('./getMyGameByName');
 
 /**
  * array that contains the actual value of the cards
@@ -11,7 +11,7 @@ const getMyGameByName = require("./getMyGameByName");
  * 3 -> 2 -> 11
  * 4 to 10 are mapped as they are
  */
-const valueMapper = [12,2,11,4,5,6,7,8,9,10];
+const valueMapper = [12, 2, 11, 4, 5, 6, 7, 8, 9, 10];
 /**
  * Array that contains the points for each face value of the cards
  * Map value:
@@ -23,11 +23,11 @@ const valueMapper = [12,2,11,4,5,6,7,8,9,10];
  * 9 -> 3
  * 10 -> 4
  */
-const scoreMapper = [11,0,10,0,0,0,0,2,3,4];
+const scoreMapper = [11, 0, 10, 0, 0, 0, 0, 2, 3, 4];
 
 module.exports = async (gameName, mongoClient) => {
   let game = await getMyGameByName(gameName, mongoClient);
-  
+
   let player1 = game.players[0];
   let player2 = game.players[1];
   let trumpCard = game.trumpCard;
@@ -36,21 +36,22 @@ module.exports = async (gameName, mongoClient) => {
   let isTheRoundFinished = false;
   let isTheGameFinished =false;
   let roundWinner = '';
-  debug('player1',player1);
-  debug('player2',player2);
-  debug('trumpCard',trumpCard);
-  debug('currentHand',currentHand);
-  //get the 2 hands
-  //the hand is not folded
+  let winner = '';
+  debug('player1', player1);
+  debug('player2', player2);
+  debug('trumpCard', trumpCard);
+  debug('currentHand', currentHand);
+  // get the 2 hands
+  // the hand is not folded
   if (!currentHand.isFolded) {
-    let heroCard = player1.currentHand.playedCard;
-    let villanCard = player2.currentHand.playedCard;
-    debug('heroCard',heroCard);
-    debug('villanCard',villanCard);
-    //check if any of the card is a Trump
+    const heroCard = player1.currentHand.playedCard;
+    const villanCard = player2.currentHand.playedCard;
+    debug('heroCard', heroCard);
+    debug('villanCard', villanCard);
+    // check if any of the card is a Trump
     heroCard.isTrump = (heroCard.suit === trumpCard.suit);
     villanCard.isTrump = (villanCard.suit === trumpCard.suit);
-    //check if no trump
+    // check if no trump
     if (!heroCard.isTrump && !villanCard.isTrump) {
       //no one played a Trump card
       //check if the 2 cards have the same suit
@@ -88,21 +89,21 @@ module.exports = async (gameName, mongoClient) => {
       }
     }
     let roundWinnerName = '';
-    //add the card to the captured card
-    if(roundWinner === 'hero') {//player_1 index 0
+    // add the card to the captured card
+    if (roundWinner === 'hero') {// player_1 index 0
       player1.cardsCaptured.push(heroCard);
       player1.cardsCaptured.push(villanCard);
-      //adding the pot to the hero bank
+      // adding the pot to the hero bank
       player1.chips += currentHand.pot;
       player1.roundLeader = true;
       player1.initiative = true;
       player2.roundLeader = false;
       player2.initiative = false;
       roundWinnerName = player1.name;
-    } else {//player_2 index 1
+    } else { // player_2 index 1
       player2.cardsCaptured.push(heroCard);
       player2.cardsCaptured.push(villanCard);
-      //adding the pot to the villan account
+      // adding the pot to the villan account
       player2.chips += currentHand.pot;
       player2.roundLeader = true;
       player2.initiative = true;
@@ -110,7 +111,7 @@ module.exports = async (gameName, mongoClient) => {
       player1.initiative = false;
       roundWinnerName = player2.name;
     }
-    let handScore = scoreMapper[heroCard.value -1] + scoreMapper[villanCard.value -1];
+    let handScore = scoreMapper[heroCard.value - 1] + scoreMapper[villanCard.value - 1];
     //calculating the current score for the players
     game.players.forEach(P => {
       let score = 0;
@@ -121,12 +122,11 @@ module.exports = async (gameName, mongoClient) => {
     });
     
     game.logs.push({
-      time : new Date().getTime(),
-      log : `${roundWinnerName} won the hand for ${currentHand.pot} and ${handScore} points`,
+      time: new Date().getTime(),
+      log: `${roundWinnerName} won the hand for ${currentHand.pot} and ${handScore} points`,
     });
-
   } else {
-    //the hand is folded
+    // the hand is folded
     let roundWinnerName = '';
     if (player1.id === currentHand.winner) {
       winner = 'hero';
@@ -138,22 +138,22 @@ module.exports = async (gameName, mongoClient) => {
       roundWinnerName = player2.name;
     }
     game.logs.push({
-      time : new Date().getTime(),
-      log : `${roundWinnerName} won the hand for ${currentHand.pot}`,
+      time: new Date().getTime(),
+      log: `${roundWinnerName} won the hand for ${currentHand.pot}`,
     });
   }
-  //Log the hand
-  //picking the new card
-  if(roundWinner === 'hero') { //player_1
-    //Pick a new card for each one Hero goes first);
-    //Pick the cards only if there are cards!!
+  // Log the hand
+  // picking the new card
+  if (roundWinner === 'hero') { // player_1
+    // Pick a new card for each one Hero goes first);
+    // Pick the cards only if there are cards!!
     if (deck.length > 0) {
       player1.hand.push(deck.pop());
       if (deck.length === 0) {
-        //debugger;
-        //no card left use trump
-        player2.hand.push({value: trumpCard.value, suit: trumpCard.suit});
-        //trumpCard = {};
+        // debugger;
+        // no card left use trump
+        player2.hand.push({ value: trumpCard.value, suit: trumpCard.suit });
+        // trumpCard = {};
       } else {
         player2.hand.push(deck.pop());
       }
