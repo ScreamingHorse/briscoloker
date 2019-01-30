@@ -3,7 +3,7 @@ import './Game.css';
 import Deck from './Deck/Deck';
 import Board from './Board/Board';
 import CapturedCards from './CapturedCards/CapturedCards';
-
+import { Link } from "react-router-dom";
 class Game extends Component {
 
   constructor(props) {
@@ -245,15 +245,16 @@ class Game extends Component {
                 this.state.currentHand.bettingRound === 0 ?
                   <React.Fragment> 
                     <button onClick={() => {this.heroBetting(0)}}>Check</button>
-                    <button onClick={() => {this.heroBetting(10)}}>Bet 10</button>
+                    <button onClick={() => {this.heroBetting(10)}} style={{marginBottom:"30px"}}>Bet 10</button>
                   </React.Fragment> :
                   <React.Fragment>
                     <button onClick={() => {this.heroBetting(heroBettingDifference)}}>Call {heroBettingDifference}</button>
                     <button onClick={() => {this.heroBetting(heroBettingDifference+10)}}>Raise {heroBettingDifference +10}</button>
                     <button onClick={() => {this.heroBetting(heroBettingDifference+30)}}>Raise ({heroBettingDifference +30})</button>
-                    <button onClick={() => {this.heroFolding()}}>Fold</button>
+                    <button onClick={() => {this.heroFolding()}}  style={{marginBottom:"5px"}}>Fold</button>
                   </React.Fragment>
                 : null }
+                <Link to="/lobby" className="fakeButton">Lobby</Link>
             </div>
             <div className="Game-middleSection__commonActions___handPot">
                 <div>
@@ -275,8 +276,8 @@ class Game extends Component {
                     if (L1.time > L2.time) return -1
                       else return 1 
                   })
-                  .map(L => {
-                  return <span>{new Date(L.time).toLocaleDateString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'})} - {L.log}</span>
+                  .map((L,i) => {
+                  return <span key={`log_${i}`}>{new Date(L.time).toLocaleDateString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'})} - {L.log}</span>
                   })
                 }
               </div>

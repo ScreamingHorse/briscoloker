@@ -12,3 +12,26 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.fakeButton {
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: white;
+  font-size: 13px;
+  padding-left: 5px;
+  padding-right: 5px;
+  text-decoration: none;
+  color: black;
+  }
+
+.fakeButton:hover {
+  background-color: teal;
+}
+
+button {
+  cursor: pointer
+}
+
+button:hover {
+  background-color: teal;
+}

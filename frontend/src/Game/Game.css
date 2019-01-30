@@ -166,4 +166,6 @@
   color: white;
   height: 85px;
   width: 300px;
+  display: flex;
+  flex-direction: column;
 }
