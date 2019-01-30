@@ -69,3 +69,7 @@ Known issue:
   1 instance is when there are more then one game for a user
 - Always wait for the MongoDB to be connected
 - Random generate the gameRoom name (joinLobby.js)
+
+Day 14
+
+Create a unique room name
