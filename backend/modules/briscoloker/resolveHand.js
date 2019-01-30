@@ -253,5 +253,5 @@ module.exports = async (gameName, mongoClient) => {
   const gamesCollection = mongoClient.collection('games');
   await mongoDbHelpers.updateOneByObjectId(gamesCollection,ObjectId(game._id),game);
   
-  return [game.isTheRoundFinished,game.isTheGameFinished];
+  return [game.isTheRoundFinished,game.isTheGameFinished, game];
 }

@@ -1,5 +1,7 @@
 const debug = require('debug')('briscoloker:playACard');
 const briscolokerHelpers = require('./briscolokerHelpers');
+const mongoDbHelpers = require('./mongoDbHelpers');
+const ObjectId = require("mongodb").ObjectID;
 
 module.exports = async (io, mongoClient, token, card) => {
   try {
@@ -31,7 +33,7 @@ module.exports = async (io, mongoClient, token, card) => {
     if (notFoldedHandDone || foldedHandDone) {
       setTimeout(async()=>{
         //5 resolve the hand
-        let [isTheRoundFinished,isTheGameFinished] = await briscolokerHelpers.resolveHand(game.name, mongoClient);
+        let [isTheRoundFinished,isTheGameFinished, theGame] = await briscolokerHelpers.resolveHand(game.name, mongoClient);
         debug("isTheRoundFinished", isTheRoundFinished);
         debug("isTheGameFinished", isTheGameFinished);
         //6 notify the clients, the client display the message that a new round is starting
@@ -45,6 +47,18 @@ module.exports = async (io, mongoClient, token, card) => {
             //8 send the new state to the clients
             await briscolokerHelpers.sendAllTheGameStates(io, game.name, mongoClient);
           }, 1500);
+        }
+        //if the game is finishes I want to archive it
+        //Archive means:
+        //1. remove from games
+        //2. adding it to gamesPlayed
+        const gamesCollection = mongoClient.collection('games');
+        const gamesPlayedCollection = mongoClient.collection('gamesPlayed');
+        if (isTheGameFinished) {
+          //1. Remove the game from games
+          let deleteResult = await mongoDbHelpers.deleteOneByObjectId(gamesCollection,ObjectId(theGame._id));
+          //2. Add to archive
+          let result = await mongoDbHelpers.insertOneThingInMongo(gamesPlayedCollection, theGame);
         }
       },150);
     }
