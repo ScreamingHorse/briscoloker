@@ -3,7 +3,7 @@ const ObjectId = require('mongodb').ObjectID;
 const mongoDbHelpers = require('./mongoDbHelpers');
 const briscolokerHelpers = require('./briscolokerHelpers');
 
-const getRoomName = () => {
+const getARoom = () => {
   const letters = 'qwertyuioplkjhgfdsazxcvbnm0987654321';
   let name = '';
   for (let idx = 0; idx < 25; idx++) {
@@ -20,6 +20,15 @@ module.exports = async (socket, io, mongoClient, token) => {
   const gamesCollection = mongoClient.collection('games');
   const usersCollecion = mongoClient.collection('users');
   try {
+    // check if the player is already in a match
+    const playersGame = await briscolokerHelpers.getMyGameBro(token, mongoClient);
+    debug('playersGame', playersGame);
+    // game found I do not need to join nor create another room
+    if (playersGame !== null) {
+      socket.join(playersGame.name);
+      io.to(playersGame.name).emit('match_ready');
+      return;
+    }
     // (try to) find an open room
     const openRooms = await mongoDbHelpers.getStuffFromMongo(
       openRoomsCollection,
@@ -81,7 +90,7 @@ module.exports = async (socket, io, mongoClient, token) => {
       }
     } else {
       // 2 no rooms, I need to create one
-      const roomName = getRoomName();
+      const roomName = getARoom();
       // Grab user information from the DB
       const user = await mongoDbHelpers.getStuffFromMongo(
         usersCollecion,
