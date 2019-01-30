@@ -79,6 +79,10 @@ module.exports = async (roomName, mongoClient) => {
     });
     game.players[0].chips -= game.sideBet;
     game.players[1].chips -= game.sideBet;
+    //If any player after the sidebet is without any chips, no betting phase
+    if (game.players[0].chips === 0 || game.players[1].chips === 0){
+      game.currentHand.isBettingPhase = false;
+    }
     game.logs.push({
       time : new Date().getTime(),
       log : `The round is ready!`

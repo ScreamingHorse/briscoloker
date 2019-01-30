@@ -66,6 +66,7 @@ module.exports = async (token, mongoClient, bet) => {
   //4. check if the betting round is over
   //   they played the same amount of chips / it's not the first check
   if (villan.currentHand.bets === hero.currentHand.bets && currentHand.bettingRound !==0) {
+    debug("Same contribution so no more betting");
     currentHand.isBettingPhase = false;
     //if the round ends, hero get the card initiave
     game.logs.push({
@@ -82,7 +83,8 @@ module.exports = async (token, mongoClient, bet) => {
   currentHand.bettingRound ++;
   //6. check if villan has still anything left
   //if not end the betting phase
-  if (villan.chips === 0 || hero.chips === 0) {
+  if (villan.chips === 0) {
+    debug("Villan chips === 0", villan.chips);
     currentHand.isBettingPhase = false;
   }
   //7 save the state of the game into mongo

@@ -59,7 +59,10 @@ ToDo:
 Day 13
 - Fixed a typo in betting, might fix the all in bug
 - Addded loggin system
+- Fixed few betting bugs (All in, starting the hand with no money)
 
+Todo
+- Handle if a player has less then the side bet at the start of the round
 
 Known issue:
 - After creating a new match, it redirected to the lobby:
