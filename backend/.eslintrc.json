@@ -2,7 +2,7 @@
   "extends": "airbnb",
   "rules" : {
     "no-console": "off",
-    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+    "no-plusplus": "off",
     "no-underscore-dangle" : 0
   }
 }

@@ -250,8 +250,8 @@ class Game extends Component {
                   <React.Fragment>
                     <button onClick={() => {this.heroBetting(heroBettingDifference)}}>Call {heroBettingDifference}</button>
                     <button onClick={() => {this.heroBetting(heroBettingDifference+10)}}>Raise {heroBettingDifference +10}</button>
-                    <button onClick={() => {this.heroBetting(heroBettingDifference+30)}}>Raise ({heroBettingDifference +30})</button>
-                    <button onClick={() => {this.heroFolding()}}  style={{marginBottom:"5px"}}>Fold</button>
+                    <button onClick={() => {this.heroBetting(heroBettingDifference+30)}}>Raise {heroBettingDifference +30}</button>
+                    <button onClick={() => {this.heroFolding()}} style={{marginBottom:"5px"}}>Fold</button>
                   </React.Fragment>
                 : null }
                 <Link to="/lobby" className="fakeButton">Lobby</Link>
