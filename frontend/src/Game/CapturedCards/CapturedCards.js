@@ -8,8 +8,7 @@ class CapturedCards extends Component {
     return (
       <div className="Game-middleSection__commonActions">
         <div className="Game-middleSection__villanStats">
-            Opponent name: {this.props.villan.name} <br />
-            Chips: {this.props.villan.chips} <br />
+          {this.props.villan.name} : {this.props.villan.chips}
         </div>
         <div className="Game-villanCaptureCards">
         { this.props.isTheRoundFinished ? null :
@@ -34,7 +33,7 @@ class CapturedCards extends Component {
           }
         </div>
         <div className="Game-heroStuff__heroStats">
-          Hero chips: {this.props.hero.chips} <br />
+          {this.props.hero.name} : {this.props.hero.chips}
         </div>
       </div>
     );

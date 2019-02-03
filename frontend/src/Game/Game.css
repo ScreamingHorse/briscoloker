@@ -37,6 +37,7 @@
   overflow-x: auto;
   overflow-y: hidden;
   margin-top: 0px;
+  height: 125px;
   background-color:#339933;
 }
 
@@ -137,6 +138,8 @@
   width: 250px;
   overflow-x: auto;
   overflow-y: hidden;
+  height: 125px;
+  margin-bottom: 15px;
   /*margin-top: 110px;*/
   background-color:#339933;
 }

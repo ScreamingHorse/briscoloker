@@ -102,6 +102,7 @@ class Game extends Component {
         villan.chips = remoteVillan.chips;
         villan.cardsInHand = remoteVillan.cardsInHand;
 
+        hero.name = remoteHero.name;
         hero.cardsCaptured = remoteHero.cardsCaptured;
         hero.hand = remoteHero.hand;
         hero.score = remoteHero.score;
@@ -233,6 +234,8 @@ class Game extends Component {
               isTheGameFinished = {this.state.gameState.isTheGameFinished}
               lastRoundWinner = {this.state.gameState.lastRoundWinner}
               winnerOfTheWholeThing = {this.state.gameState.winnerOfTheWholeThing}
+              villan = {this.state.villan}
+              hero = {this.state.hero}
             />
             <CapturedCards
               villan = {this.state.villan}
