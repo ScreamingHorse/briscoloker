@@ -25,12 +25,10 @@ const scoreMapper = [11, 0, 10, 0, 0, 0, 0, 2, 3, 4];
 
 module.exports = async (gameName, mongoClient) => {
   const game = await getMyGameByName(gameName, mongoClient);
-
   const player1 = game.players[0];
   const player2 = game.players[1];
   const { trumpCard, currentHand, deck } = game;
   let roundWinner = '';
-  let winner;
   debug('player1', player1);
   debug('player2', player2);
   debug('trumpCard', trumpCard);
@@ -184,7 +182,7 @@ module.exports = async (gameName, mongoClient) => {
     + game.discardedCards.length
   );
   debug('cardsPlayed', cardsPlayed);
-  if (cardsPlayed === 40) {
+  if (cardsPlayed === 10) {
     debug('Game finished', player1.score, player2.score);
     game.isTheRoundFinished = true;
     // assign the sideBet

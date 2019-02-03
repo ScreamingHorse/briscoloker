@@ -39,6 +39,7 @@
   margin-top: 0px;
   height: 125px;
   background-color:#339933;
+  margin-bottom: 15px;
 }
 
 .Game-villanHand {
@@ -139,7 +140,6 @@
   overflow-x: auto;
   overflow-y: hidden;
   height: 125px;
-  margin-bottom: 15px;
   /*margin-top: 110px;*/
   background-color:#339933;
 }

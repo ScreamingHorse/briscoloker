@@ -33,7 +33,7 @@ module.exports = async (roomName, mongoClient) => {
     // Everything is reset
     // Step 1: Build the deck
     // cycling the suits (0->3)
-    for (let s = 0; s < 3; s++) {
+    for (let s = 0; s < 1; s++) {
       // values (1 -> 10)
       for (let v = 1; v <= 10; v++) {
         game.deck.push({

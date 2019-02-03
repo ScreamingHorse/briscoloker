@@ -1,6 +1,5 @@
 const debug = require('debug')('briscoloker:playACard');
 const briscolokerHelpers = require('../briscolokerHelpers');
-const mongoDbHelpers = require('../mongoDbHelpers');
 
 module.exports = async (io, mongoClient, token, card) => {
   try {
@@ -22,8 +21,8 @@ module.exports = async (io, mongoClient, token, card) => {
     // 4.1 : both player played a card and the hand is not folded
     const notFoldedHandDone = (
       !game.currentHand.isFolded
-      && game.players[0].playedCard !== null
-      && game.players[1].playedCard !== null
+      && game.players[0].currentHand.playedCard !== null
+      && game.players[1].currentHand.playedCard !== null
     );
     debug('4.1', game.currentHand.isFolded, game.players[0].playedCard, game.players[1].playedCard, notFoldedHandDone);
     // 4.2 : the hand is folded and both players have the same number of cards in the hand
@@ -60,9 +59,9 @@ module.exports = async (io, mongoClient, token, card) => {
         // 2. adding it to gamesPlayed
         if (isTheGameFinished) {
           // 1. Remove the game from games
-          await mongoDbHelpers.deleteOneByObjectId('games', theGame._id);
+          await mongoClient.deleteOneByObjectId('games', theGame._id);
           // 2. Add to archive
-          await mongoDbHelpers.insertOneThingInMongo('gamesPlayed', theGame);
+          await mongoClient.insertOneThingInMongo('gamesPlayed', theGame);
         }
       }, 150);
     }

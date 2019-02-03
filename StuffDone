@@ -73,3 +73,17 @@ Known issue:
 Day 14
 
 Create a unique room name
+
+Day 15
+
+Added the useless list of game played on the lobby
+Refactored the mongoDB module
+Fixed the resolve hand bug
+Improve a bit the board
+
+Known isssue:
+If a player start a game, then login again, he/she shouldn't join the same game as a villan
+
+Todo:
+ - After login if there is a game for the player, go to the board
+ - Deployment scripts
