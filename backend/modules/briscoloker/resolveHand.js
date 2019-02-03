@@ -1,6 +1,4 @@
 const debug = require('debug')('briscoloker:briscolokerHelpers:resolveHand');
-const ObjectId = require('mongodb').ObjectID;
-const mongoDbHelpers = require('../mongoDbHelpers');
 const getMyGameByName = require('./getMyGameByName');
 
 /**
@@ -30,13 +28,9 @@ module.exports = async (gameName, mongoClient) => {
 
   const player1 = game.players[0];
   const player2 = game.players[1];
-  const trumpCard = game.trumpCard;
-  const currentHand = game.currentHand;
-  const deck = game.deck;
-  const isTheRoundFinished = false;
-  const isTheGameFinished = false;
-  const roundWinner = '';
-  const winner = '';
+  const { trumpCard, currentHand, deck } = game;
+  let roundWinner = '';
+  let winner;
   debug('player1', player1);
   debug('player2', player2);
   debug('trumpCard', trumpCard);
@@ -53,19 +47,19 @@ module.exports = async (gameName, mongoClient) => {
     villanCard.isTrump = (villanCard.suit === trumpCard.suit);
     // check if no trump
     if (!heroCard.isTrump && !villanCard.isTrump) {
-      //no one played a Trump card
-      //check if the 2 cards have the same suit
+      // no one played a Trump card
+      // check if the 2 cards have the same suit
       if (heroCard.suit === villanCard.suit) {
-        //the cards are from the same suit
-        //the higest wins
-        if (valueMapper[heroCard.value-1] > valueMapper[villanCard.value-1]) {
+        // the cards are from the same suit
+        // the higest wins
+        if (valueMapper[heroCard.value - 1] > valueMapper[villanCard.value - 1]) {
           roundWinner = 'hero';
         } else {
           roundWinner = 'villan';
         }
       } else {
-        //the cards are not from the same suit
-        //the leader wins
+        // the cards are not from the same suit
+        // the leader wins
         if (player1.roundLeader) {
           roundWinner = 'hero';
         } else {
@@ -73,9 +67,9 @@ module.exports = async (gameName, mongoClient) => {
         }
       }
     } else if ((heroCard.isTrump && villanCard.isTrump)) {
-      //2 trumps 
-      //check the card with higher face value
-      if (valueMapper[heroCard.value-1] > valueMapper[villanCard.value-1]) {
+      // 2 trumps
+      // check the card with higher face value
+      if (valueMapper[heroCard.value - 1] > valueMapper[villanCard.value - 1]) {
         roundWinner = 'hero';
       } else {
         roundWinner = 'villan';
@@ -90,7 +84,8 @@ module.exports = async (gameName, mongoClient) => {
     }
     let roundWinnerName = '';
     // add the card to the captured card
-    if (roundWinner === 'hero') {// player_1 index 0
+    if (roundWinner === 'hero') {
+      // player_1 index 0
       player1.cardsCaptured.push(heroCard);
       player1.cardsCaptured.push(villanCard);
       // adding the pot to the hero bank
@@ -111,16 +106,15 @@ module.exports = async (gameName, mongoClient) => {
       player1.initiative = false;
       roundWinnerName = player2.name;
     }
-    let handScore = scoreMapper[heroCard.value - 1] + scoreMapper[villanCard.value - 1];
-    //calculating the current score for the players
-    game.players.forEach(P => {
+    const handScore = scoreMapper[heroCard.value - 1] + scoreMapper[villanCard.value - 1];
+    // calculating the current score for the players
+    game.players.forEach((P) => {
       let score = 0;
-      P.cardsCaptured.forEach(C => {
-        score += scoreMapper[C.value -1];
+      P.cardsCaptured.forEach((C) => {
+        score += scoreMapper[C.value - 1];
       });
       P.score = score;
     });
-    
     game.logs.push({
       time: new Date().getTime(),
       log: `${roundWinnerName} won the hand for ${currentHand.pot} and ${handScore} points`,
@@ -191,17 +185,17 @@ module.exports = async (gameName, mongoClient) => {
   );
   debug('cardsPlayed', cardsPlayed);
   if (cardsPlayed === 40) {
-    debug('Game finished',player1.score, player2.score);
+    debug('Game finished', player1.score, player2.score);
     game.isTheRoundFinished = true;
-    //assign the sideBet
+    // assign the sideBet
     if (player1.score === player2.score) {
       debug('it\'s a tie!!!!');
       player1.chips += game.sideBet;
       player2.chips += game.sideBet;
       game.lastRoundWinner = 'This round was a tie!';
       game.logs.push({
-        time : new Date().getTime(),
-        log : `Last round was a tie, each player recived ${game.sideBet}`,
+        time: new Date().getTime(),
+        log: `Last round was a tie, each player recived ${game.sideBet}`,
       });
     } else if (player1.score > player2.score) {
       debug('player_1 won');
@@ -211,8 +205,8 @@ module.exports = async (gameName, mongoClient) => {
       }
       game.lastRoundWinner = `The winner is ${player1.name}!`;
       game.logs.push({
-        time : new Date().getTime(),
-        log : `${player1.name} won for ${game.sideBet * 2}`,
+        time: new Date().getTime(),
+        log: `${player1.name} won for ${game.sideBet * 2}`,
       });
     } else {
       debug('player_2 won');
@@ -222,28 +216,28 @@ module.exports = async (gameName, mongoClient) => {
       }
       game.lastRoundWinner = `The winner is ${player2.name}!`;
       game.logs.push({
-        time : new Date().getTime(),
-        log : `${player2.name} won for ${game.sideBet * 2}`,
+        time: new Date().getTime(),
+        log: `${player2.name} won for ${game.sideBet * 2}`,
       });
     }
   }
-  debug('currentHand',currentHand);
-  game.players.forEach(P => {
-    //reset the bets
+  debug('currentHand', currentHand);
+  game.players.forEach((P) => {
+    // reset the bets
     P.currentHand.bets = 0;
-    //reset the played cards
+    // reset the played cards
     P.currentHand.playedCard = null;
   });
 
-  //if the round is finished I need to check if both of the players still have some chips
+  // if the round is finished I need to check if both of the players still have some chips
   if (game.isTheRoundFinished) {
-    game.round ++;
-    //playe 1 is without chips => player 2 won
+    game.round++;
+    // player 1 is without chips => player 2 won
     if (player1.chips === 0) {
       game.isTheGameFinished = true;
       game.winnerOfTheWholeThing = player2.name;
     } else if (player2.chips === 0) {
-      //playe 2 is without chips => player 1 won
+      // player 2 is without chips => player 1 won
       game.isTheGameFinished = true;
       game.winnerOfTheWholeThing = player1.name;
     }
@@ -253,9 +247,7 @@ module.exports = async (gameName, mongoClient) => {
   debug('game.lastRoundWinner', game.lastRoundWinner);
   debug('game.winnerOfTheWholeThing', game.winnerOfTheWholeThing);
 
-  //3 save the state of the game into mongo
-  const gamesCollection = mongoClient.collection('games');
-  await mongoDbHelpers.updateOneByObjectId(gamesCollection,ObjectId(game._id),game);
-  
-  return [game.isTheRoundFinished,game.isTheGameFinished, game];
-}
+  // 3 save the state of the game into mongo
+  await mongoClient.updateOneByObjectId('games', game._id, game);
+  return [game.isTheRoundFinished, game.isTheGameFinished, game];
+};

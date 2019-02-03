@@ -1,7 +1,5 @@
 
 const debug = require('debug')('briscoloker:briscolokerHelpers:fold');
-const ObjectId = require('mongodb').ObjectID;
-const mongoDbHelpers = require('../mongoDbHelpers');
 const getMyGameBro = require('./getMyGameBro');
 
 module.exports = async (token, mongoClient) => {
@@ -9,7 +7,7 @@ module.exports = async (token, mongoClient) => {
   const game = await getMyGameBro(token, mongoClient);
   const hero = game.players.filter(P => P.id === token)[0];
   const villan = game.players.filter(P => P.id !== token)[0];
-  const currentHand = game.currentHand;
+  const { currentHand } = game;
 
   game.logs.push({
     time: new Date().getTime(),
@@ -25,6 +23,5 @@ module.exports = async (token, mongoClient) => {
   // 3. villan win the hand
   currentHand.winner = villan.id;
   // 4. save the state of the game into mongo
-  const gamesCollection = mongoClient.collection('games');
-  await mongoDbHelpers.updateOneByObjectId(gamesCollection, ObjectId(game._id), game);
+  await mongoClient.updateOneByObjectId('games', game._id, game);
 };

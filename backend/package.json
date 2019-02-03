@@ -4,7 +4,7 @@
   "description": "Backend services for the briscoloker",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=dev DEBUG=briscoloker:pastGames nodemon index.js",
+    "start": "NODE_ENV=dev DEBUG=briscoloker:registerUser nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

@@ -1,6 +1,4 @@
 const debug = require('debug')('briscoloker:briscolokerHelpers:playACard');
-const ObjectId = require('mongodb').ObjectID;
-const mongoDbHelpers = require('../mongoDbHelpers');
 const getMyGameBro = require('./getMyGameBro');
 
 module.exports = async (token, mongoClient, card) => {
@@ -28,7 +26,7 @@ module.exports = async (token, mongoClient, card) => {
   const game = await getMyGameBro(token, mongoClient);
   const hero = game.players.filter(P => P.id === token)[0];
   const villan = game.players.filter(P => P.id !== token)[0];
-  const currentHand = game.currentHand;
+  const { currentHand } = game;
 
   // 1. get the card that I want to play
   const cardToPlay = hero.hand.filter(C => C.value === card.value && C.suit === card.suit)[0];
@@ -53,8 +51,7 @@ module.exports = async (token, mongoClient, card) => {
   villan.initiative = true;
 
   // 3. save the state of the game into mongo
-  const gamesCollection = mongoClient.collection('games');
-  await mongoDbHelpers.updateOneByObjectId(gamesCollection, ObjectId(game._id), game);
+  await mongoClient.updateOneByObjectId('games', game._id, game);
 
   // 4. return game
   return game;

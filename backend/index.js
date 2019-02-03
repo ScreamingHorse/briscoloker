@@ -9,29 +9,16 @@ app.use(bodyParser());
 // servers
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
-
 const debug = require('debug')('briscoloker:index');
-const MongoClient = require('mongodb').MongoClient;
-const url = 'mongodb://localhost:27017';
-let briscolokerMongoClient = null;
-
-// Use connect method to connect to the server
-MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
-  if (err) {
-    console.error(err);
-    return false;
-  }
-  briscolokerMongoClient = client.db('briscoloker');
-  console.log('Connected successfully to mongo server');
-});
+const briscolokerMongoClient = require('./modules/mongoDbHelpers')('mongodb://localhost:27017');
 
 // SOCKET.IO Modules
-const joinLobby = require('./modules/joinLobby');
-const tableReady = require('./modules/tableReady');
-const reconnectMe = require('./modules/reconnectMe');
-const betting = require('./modules/betting');
-const playACard = require('./modules/playACard');
-const fold = require('./modules/fold');
+const joinLobby = require('./modules/socketIo/joinLobby');
+const tableReady = require('./modules/socketIo/tableReady');
+const reconnectMe = require('./modules/socketIo/reconnectMe');
+const betting = require('./modules/socketIo/betting');
+const playACard = require('./modules/socketIo/playACard');
+const fold = require('./modules/socketIo/fold');
 
 // API Modules
 const registerUser = require('./modules/API/registerUser');
@@ -115,7 +102,7 @@ io.on('connection', (socket) => {
   });
 
   // triggered when the browser goes to /game
-  socket.on('table_ready',async (payload)=>{
+  socket.on('table_ready', async (payload) => {
     console.log('message for table_ready payload', payload);
     await tableReady(socket, briscolokerMongoClient, payload.token);
   });

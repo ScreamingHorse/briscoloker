@@ -94,8 +94,8 @@ class Lobby extends Component {
               Past games:
               <ul>
                 {
-                  this.state.pastGames.map(G => {
-                    return <li>{G.id}, {G.played}, {G.winner} </li>
+                  this.state.pastGames.map((G,k) => {
+                    return <li key={`k${k}`}>{G.id}, {G.played}, {G.winner} </li>
                   })
                 }
               </ul>

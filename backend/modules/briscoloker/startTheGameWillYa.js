@@ -1,6 +1,4 @@
 const debug = require('debug')('briscoloker:briscolokerHelpers:startTheGameWillYa');
-const ObjectId = require('mongodb').ObjectID;
-const mongoDbHelpers = require('../mongoDbHelpers');
 const getMyGameByName = require('./getMyGameByName');
 
 module.exports = async (roomName, mongoClient) => {
@@ -53,7 +51,7 @@ module.exports = async (roomName, mongoClient) => {
     game.players[game.roundLeader].initiative = true;
     // step 4 pick the cards for the players
     // I am picking one each.
-    for (let iii=0; iii<3; iii++) {
+    for (let iii = 0; iii < 3; iii++) {
       game.players[0].hand.push(game.deck.pop());
       game.players[1].hand.push(game.deck.pop());
     }
@@ -106,8 +104,7 @@ module.exports = async (roomName, mongoClient) => {
       time: new Date().getTime(),
       log: `${game.players[game.roundLeader].name} goes first`,
     });
-    const gamesCollection = mongoClient.collection('games');
-    await mongoDbHelpers.updateOneByObjectId(gamesCollection, ObjectId(game._id), game);
+    await mongoClient.updateOneByObjectId('games', game._id, game);
     return true;
   } catch (e) {
     console.error('error creating the game', e);

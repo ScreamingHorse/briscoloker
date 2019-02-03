@@ -1,7 +1,6 @@
 const debug = require('debug')('briscoloker:joinLobby');
 const ObjectId = require('mongodb').ObjectID;
-const mongoDbHelpers = require('./mongoDbHelpers');
-const briscolokerHelpers = require('./briscolokerHelpers');
+const briscolokerHelpers = require('../briscolokerHelpers');
 
 const getARoom = () => {
   const letters = 'qwertyuioplkjhgfdsazxcvbnm0987654321';
@@ -15,10 +14,6 @@ const getARoom = () => {
 
 module.exports = async (socket, io, mongoClient, token) => {
   debug('Need to join a room');
-  // Get the documents collection
-  const openRoomsCollection = mongoClient.collection('openRooms');
-  const gamesCollection = mongoClient.collection('games');
-  const usersCollecion = mongoClient.collection('users');
   try {
     // check if the player is already in a match
     const playersGame = await briscolokerHelpers.getMyGameBro(token, mongoClient);
@@ -30,8 +25,8 @@ module.exports = async (socket, io, mongoClient, token) => {
       return;
     }
     // (try to) find an open room
-    const openRooms = await mongoDbHelpers.getStuffFromMongo(
-      openRoomsCollection,
+    const openRooms = await mongoClient.getStuffFromMongo(
+      'openRooms',
       {},
       { created: 1 },
       1,
@@ -42,15 +37,14 @@ module.exports = async (socket, io, mongoClient, token) => {
       const roomToJoin = openRooms[0];
       debug('Joining and existing room', roomToJoin);
       // 1. Remove the room from available rooms
-      const deleteResult = await mongoDbHelpers.deleteOneByObjectId(
-        openRoomsCollection,
-        ObjectId(roomToJoin._id),
+      const deleteResult = await mongoClient.deleteOneByObjectId(
+        'openRooms', roomToJoin._id,
       );
       if (deleteResult) {
         // 2. Update the room object with the current socket ID
         // 2.1 Get user info from DB
-        const user = await mongoDbHelpers.getStuffFromMongo(
-          usersCollecion,
+        const user = await mongoClient.getStuffFromMongo(
+          'users',
           { _id: ObjectId(token) },
           {},
           1,
@@ -67,7 +61,7 @@ module.exports = async (socket, io, mongoClient, token) => {
       }
       // 3. Move the room the game collection
       // (insert the room into games collection => no one can join this room anymore)
-      const result = await mongoDbHelpers.insertOneThingInMongo(gamesCollection, roomToJoin);
+      const result = await mongoClient.insertOneThingInMongo('games', roomToJoin);
       if (result) {
         // the game is ready, joining the socket.io room
         debug('Joining', roomToJoin.name);
@@ -92,8 +86,8 @@ module.exports = async (socket, io, mongoClient, token) => {
       // 2 no rooms, I need to create one
       const roomName = getARoom();
       // Grab user information from the DB
-      const user = await mongoDbHelpers.getStuffFromMongo(
-        usersCollecion,
+      const user = await mongoClient.getStuffFromMongo(
+        'users',
         { _id: ObjectId(token) },
         {},
         1,
@@ -117,8 +111,8 @@ module.exports = async (socket, io, mongoClient, token) => {
         ],
       };
       // creating the room in mongo DB
-      const insertResult = await mongoDbHelpers.insertOneThingInMongo(
-        openRoomsCollection,
+      const insertResult = await mongoClient.insertOneThingInMongo(
+        'openRooms',
         roomObject,
       );
       // if no errors while inserting we are good

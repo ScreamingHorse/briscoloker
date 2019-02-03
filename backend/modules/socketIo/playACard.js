@@ -1,7 +1,6 @@
 const debug = require('debug')('briscoloker:playACard');
-const ObjectId = require('mongodb').ObjectID;
-const briscolokerHelpers = require('./briscolokerHelpers');
-const mongoDbHelpers = require('./mongoDbHelpers');
+const briscolokerHelpers = require('../briscolokerHelpers');
+const mongoDbHelpers = require('../mongoDbHelpers');
 
 module.exports = async (io, mongoClient, token, card) => {
   try {
@@ -59,13 +58,11 @@ module.exports = async (io, mongoClient, token, card) => {
         // Archive means:
         // 1. remove from games
         // 2. adding it to gamesPlayed
-        const gamesCollection = mongoClient.collection('games');
-        const gamesPlayedCollection = mongoClient.collection('gamesPlayed');
         if (isTheGameFinished) {
           // 1. Remove the game from games
-          await mongoDbHelpers.deleteOneByObjectId(gamesCollection, ObjectId(theGame._id));
+          await mongoDbHelpers.deleteOneByObjectId('games', theGame._id);
           // 2. Add to archive
-          await mongoDbHelpers.insertOneThingInMongo(gamesPlayedCollection, theGame);
+          await mongoDbHelpers.insertOneThingInMongo('gamesPlayed', theGame);
         }
       }, 150);
     }
