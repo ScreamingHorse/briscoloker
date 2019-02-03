@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Modal } from 'react-modal-button';
+import {API_ENDPOINT} from '../config';
 import './Lobby.css';
+const axios = require('axios');
 
 class Lobby extends Component {
 
@@ -8,6 +10,7 @@ class Lobby extends Component {
     super(props);
     this.handlePlay = this.handlePlay.bind(this);
     this.handleGoToTheGame = this.handleGoToTheGame.bind(this);
+    this.APIGetGameList = this.APIGetGameList.bind(this);
 
     window.socket.on('match_ready', () => {
       clearInterval(this.searchTimer);
@@ -19,12 +22,30 @@ class Lobby extends Component {
         this.handleGoToTheGame();
       }, 2000)
     });
-
+    this.APIGetGameList(localStorage.getItem('token'));
     this.state = {
-      isSearching : false,
-      searchTime : 0,
-      token : localStorage.getItem("token"),
+      isSearching: false,
+      searchTime: 0,
+      token: localStorage.getItem('token'),
+      pastGames: [],
     };
+  }
+
+  APIGetGameList(token) {
+    axios.get(`${API_ENDPOINT}/past_games`, {
+      headers: {
+        'x-btoken': token
+      }
+    })
+      .then(result => {
+        //debugger
+        this.setState({
+          pastGames : result.data.games,
+        })
+      })
+      .catch(e => {
+        console.error("Eroor while getting the past games")
+      })
   }
 
   handleGoToTheGame() {
@@ -64,7 +85,24 @@ class Lobby extends Component {
       : null
       }
       {!this.state.isSearching && !this.state.isRoomReady ?
-      <button onClick={this.handlePlay} className="playButton" style={{height:window.innerHeight}}>Play!</button> : null
+        <React.Fragment>
+          <div className="Lobby-main">
+            <div className="Lobby-main__playbutton">
+              <button onClick={this.handlePlay} className="playButton" >Play!</button>
+            </div>
+            <div className="Lobby-main__pastggames">
+              Past games:
+              <ul>
+                {
+                  this.state.pastGames.map(G => {
+                    return <li>{G.id}, {G.played}, {G.winner} </li>
+                  })
+                }
+              </ul>
+            </div>
+          </div>
+        </React.Fragment>
+         : null
       }
       </div>
     );

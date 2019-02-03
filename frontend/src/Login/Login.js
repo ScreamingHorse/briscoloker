@@ -66,7 +66,9 @@ class Login extends Component {
           console.log("I am disconnected")
         });
         setInterval(()=> {
-          this.props.history.push('/lobby');
+          // not using the router because it creates some problem after the first load
+          // this.props.history.push('/lobby');
+          window.location.assign('/lobby');
         },2500);
         this.setState({
           isLoggingIn : false,

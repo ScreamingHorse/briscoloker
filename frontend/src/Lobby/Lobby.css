@@ -1,4 +1,24 @@
 .playButton {
-  width: 100%;
+  width: 280px;
+  height: 150px;
   font-size: 110px;
+}
+
+.Lobby-main {
+  display: flex
+}
+
+.Lobby-main__pastggames {
+  margin-left: 10px;
+  font-size: 25px;
+}
+
+.Lobby-main__pastggames ul {
+  list-style: none;
+  margin: 5px;
+  margin-left: -40px;
+}
+
+.Lobby-main__pastggames li {
+  font-size: 18px;
 }

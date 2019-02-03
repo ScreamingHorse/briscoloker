@@ -149,6 +149,7 @@ class Game extends Component {
     //Try to reconnect to a game using the auth token
     window.socket.on('connect', () => {
       //Check if I have a game ready
+      //debugger
       let token = localStorage.getItem('token');
       if (token !== null) {
         window.socket.emit('reconnect_me',{ token });

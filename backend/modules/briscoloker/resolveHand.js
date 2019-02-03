@@ -26,17 +26,17 @@ const valueMapper = [12, 2, 11, 4, 5, 6, 7, 8, 9, 10];
 const scoreMapper = [11, 0, 10, 0, 0, 0, 0, 2, 3, 4];
 
 module.exports = async (gameName, mongoClient) => {
-  let game = await getMyGameByName(gameName, mongoClient);
+  const game = await getMyGameByName(gameName, mongoClient);
 
-  let player1 = game.players[0];
-  let player2 = game.players[1];
-  let trumpCard = game.trumpCard;
-  let currentHand = game.currentHand;
-  let deck = game.deck;
-  let isTheRoundFinished = false;
-  let isTheGameFinished =false;
-  let roundWinner = '';
-  let winner = '';
+  const player1 = game.players[0];
+  const player2 = game.players[1];
+  const trumpCard = game.trumpCard;
+  const currentHand = game.currentHand;
+  const deck = game.deck;
+  const isTheRoundFinished = false;
+  const isTheGameFinished = false;
+  const roundWinner = '';
+  const winner = '';
   debug('player1', player1);
   debug('player2', player2);
   debug('trumpCard', trumpCard);
@@ -159,8 +159,8 @@ module.exports = async (gameName, mongoClient) => {
       }
     }
   } else {
-    //Pick a new card for each one Villan goes first);
-    //only if the deck is not empty, broooo!
+    // Pick a new card for each one Villan goes first);
+    // only if the deck is not empty, broooo!
     if (deck.length > 0) {
       player2.hand.push(deck.pop());
       if (deck.length === 0) {
@@ -172,9 +172,9 @@ module.exports = async (gameName, mongoClient) => {
       }
     }
   }
-  //check if both of the player have money, if not the betting phase is skipped
+  // check if both of the player have money, if not the betting phase is skipped
   currentHand.isBettingPhase = true;
-  debug('currentHand.isBettingPhase',currentHand.isBettingPhase);
+  debug('currentHand.isBettingPhase', currentHand.isBettingPhase);
   if (player1.chips === 0 || player2.chips === 0) {
     currentHand.isBettingPhase = false;
   }
@@ -183,11 +183,15 @@ module.exports = async (gameName, mongoClient) => {
   currentHand.winner = null;
   currentHand.isFolded = false;
 
-  //check if the game is still on
-  let cardsPlayed = player1.cardsCaptured.length + player2.cardsCaptured.length + game.discardedCards.length;
+  // check if the game is still on
+  const cardsPlayed = (
+    player1.cardsCaptured.length
+    + player2.cardsCaptured.length
+    + game.discardedCards.length
+  );
   debug('cardsPlayed', cardsPlayed);
-  if (cardsPlayed === 10) {
-    debug("Game finished",player1.score, player2.score);
+  if (cardsPlayed === 40) {
+    debug('Game finished',player1.score, player2.score);
     game.isTheRoundFinished = true;
     //assign the sideBet
     if (player1.score === player2.score) {
@@ -244,10 +248,10 @@ module.exports = async (gameName, mongoClient) => {
       game.winnerOfTheWholeThing = player1.name;
     }
   }
-  debug("game.isTheRoundFinished", game.isTheRoundFinished);
-  debug("game.isTheGameFinished", game.isTheGameFinished);
-  debug("game.lastRoundWinner", game.lastRoundWinner);
-  debug("game.winnerOfTheWholeThing", game.winnerOfTheWholeThing);
+  debug('game.isTheRoundFinished', game.isTheRoundFinished);
+  debug('game.isTheGameFinished', game.isTheGameFinished);
+  debug('game.lastRoundWinner', game.lastRoundWinner);
+  debug('game.winnerOfTheWholeThing', game.winnerOfTheWholeThing);
 
   //3 save the state of the game into mongo
   const gamesCollection = mongoClient.collection('games');
