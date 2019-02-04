@@ -1,9 +1,0 @@
-.Card {
-  background-color: brown;
-  height: 99px;
-  width: 65px;
-  margin: 5px;
-  border-radius: 10px;
-  background-image: url('./cards.jpg');
-  border: solid 1px;
-}
