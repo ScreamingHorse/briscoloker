@@ -1,0 +1,125 @@
+Day 9:
+- Created the mongo helpers so we can await the DB
+- Refactored the joinLobby storing the 'token' and the 'username' on the games collection
+- Renamed closedRooms to games
+- Reconnection to an existing game from '/game'
+- Moved 'start game on the server'
+
+Known issues:
+- It seems that everytime a player 'reconnect' to the socket.io (reload the /game page) the server creates a new game
+
+Todo:
+- Frontend: Delete the code for new game as it is now on the server
+
+Day 10:
+
+- Game is now created after both players joined the lobby (join_lobby)
+- Table ready sends back the state of the match, it doesn't start it
+- We are passing the token as QS when connecting to the webSocket
+- The betting pahse is on the server now!
+- Playing card is now server side
+
+Known issue:
+- There is not side bet at the start of the round
+- The hand is not actually resolved - The code on the server is missing
+
+Todo:
+- Backend: resolving the hand
+- Backend: do the side bet at the start of the game
+
+Day 11:
+- Hand resolver
+- Sidebet at the start of the hand
+- Handle play cards if folded (push on discarded pile, don't show the discarded card on the board)
+- Not sending the list of the discarded card to the client, but only the ammount of them
+- Refactored betting
+- Redesign of the Table
+
+Known issues:
+- After creating a new match, it redirected to the lobby (only the 1st time after the login ?)
+- The winner of the first hand is wrong? If the 2 suits are not the same
+
+Todo:
+- Handle case where 2 'all-in's, if the first all in is bigger, when the second player calls all-in with less chips the bet need to be re-sized
+- Display the correct ammount of opponent cards
+
+Day 12:
+- Display the right number of cards in the opponent hand
+- Moved few briscolokerHelpers on their own module (Socket.Io)
+- Display on the frontend when the round is finished
+- Display the end screen when the game ends!
+- Handle back to lobby after game ended
+
+Known issue:
+- The betting bug for all in is back
+
+ToDo:
+- Handle completed game, archive them somewhere
+
+Day 13
+- Fixed a typo in betting, might fix the all in bug
+- Addded loggin system
+- Fixed few betting bugs (All in, starting the hand with no money)
+
+Todo
+- Handle if a player has less then the side bet at the start of the round
+
+Known issue:
+- After creating a new match, it redirected to the lobby:
+  1 instance is when there are more then one game for a user
+- Always wait for the MongoDB to be connected
+- Random generate the gameRoom name (joinLobby.js)
+
+Day 14
+
+Create a unique room name
+
+Day 15
+
+Added the useless list of game played on the lobby
+Refactored the mongoDB module
+Fixed the resolve hand bug
+Improve a bit the board
+
+Known isssue:
+If a player start a game, then login again, he/she shouldn't join the same game as a villan
+
+Todo:
+ - After login if there is a game for the player, go to the board
+ - Deployment scripts
+
+Day 16
+
+Added the .env for the Websocket server and API endpoint
+
+Day 19
+
+Added the interval for the timer, that is now frontend.
+
+Day 20
+
+Added the interval as a const
+Changed the disconnect behaviour
+
+Known Bug:
+  - reconnect_me fails after the end of a game
+Potential Issue:
+  - Potential issue when calling and all-in with the exact amount (seems to redirect from /game to /lobby)
+
+Day 21
+
+Add route for register
+Add creation date and lastLogin date to the userObject in Mongo
+Added button to stop search
+
+Day 22
+Renamed route from past_game to user_info
+The wins and losses are from the server now
+Fixed cards background
+
+Day 23
+Improved the UI
+
+Day 24
+Added button for ranked matches
+Added game type to past games

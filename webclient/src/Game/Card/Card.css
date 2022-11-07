@@ -1,0 +1,239 @@
+.Card {
+  background-color: brown;
+  height: 99px;
+  width: 65px;
+  margin: 5px;
+  border-radius: 10px;
+  background-image: url('./cards.jpg');
+  border: solid 1px;
+}
+
+.Card-cardOverlay {
+  border: solid 1px;
+  border-radius: 10px;
+  background-color: grey;
+  height: 100%;
+  opacity: .3;
+  cursor: pointer;
+}
+
+.Card-cardOverlay:hover {
+  opacity: .8;
+}
+
+.Card-cardoverlay__action {
+  opacity: .8;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: -90px;
+    background-color: wheat;
+}
+
+.Card button {
+  margin-top: 100px;
+}
+.Card-background__0-1 {
+  background-position-y: 0;
+  background-position-x: 0;
+}
+
+.Card-background__0-2 {
+  background-position-y: 0;
+  background-position-x: -62px;
+}
+
+.Card-background__0-3 {
+  background-position-y: 0;
+  background-position-x: -124px;
+}
+
+.Card-background__0-4 {
+  background-position-y: 0;
+  background-position-x: -188px;
+}
+
+.Card-background__0-5 {
+  background-position-y: 0;
+  background-position-x: -251px;
+}
+
+.Card-background__0-6 {
+  background-position-y: 0;
+  background-position-x: -314px;
+}
+
+.Card-background__0-7 {
+  background-position-y: 0;
+  background-position-x: -378px;
+}
+
+.Card-background__0-8 {
+  background-position-y: 0;
+  background-position-x: -442px;
+}
+
+.Card-background__0-9 {
+  background-position-y: 0;
+  background-position-x: -505px;
+}
+
+.Card-background__0-10 {
+  background-position-y: 0;
+  background-position-x: -568px;
+}
+
+.Card-background__1-1 {
+  background-position-y: -100px;
+  background-position-x: 0px;
+}
+
+.Card-background__1-2 {
+  background-position-y: -100px;
+  background-position-x: -62px;
+}
+
+.Card-background__1-3 {
+  background-position-y: -100px;
+  background-position-x: -124px;
+}
+
+.Card-background__1-4 {
+  background-position-y: -100px;
+  background-position-x: -188px;
+}
+
+.Card-background__1-5 {
+  background-position-y: -100px;
+  background-position-x: -251px;
+}
+
+.Card-background__1-6 {
+  background-position-y: -100px;
+  background-position-x: -314px;
+}
+
+.Card-background__1-7 {
+  background-position-y: -100px;
+  background-position-x: -378px;
+}
+
+.Card-background__1-8 {
+  background-position-y: -100px;
+  background-position-x: -442px;
+}
+
+.Card-background__1-9 {
+  background-position-y: -100px;
+  background-position-x: -505px;
+}
+
+.Card-background__1-10 {
+  background-position-y: -100px;
+  background-position-x: -568px;
+}
+
+.Card-background__2-1 {
+  background-position-y: -200px;
+  background-position-x: 0px;
+}
+
+.Card-background__2-2 {
+  background-position-y: -200px;
+  background-position-x: -62px;
+}
+
+.Card-background__2-3 {
+  background-position-y: -200px;
+  background-position-x: -124px;
+}
+
+.Card-background__2-4 {
+  background-position-y: -200px;
+  background-position-x: -188px;
+}
+
+.Card-background__2-5 {
+  background-position-y: -200px;
+  background-position-x: -251px;
+}
+
+.Card-background__2-6 {
+  background-position-y: -200px;
+  background-position-x: -317px;
+}
+
+.Card-background__2-7 {
+  background-position-y: -200px;
+  background-position-x: -378px;
+}
+
+.Card-background__2-8 {
+  background-position-y: -200px;
+  background-position-x: -442px;
+}
+
+.Card-background__2-9 {
+  background-position-y: -200px;
+  background-position-x: -505px;
+}
+
+.Card-background__2-10 {
+  background-position-y: -200px;
+  background-position-x: -568px;
+}
+
+.Card-background__2-10 {
+  background-position-y: -200px;
+  background-position-x: -568px;
+}
+
+.Card-background__3-1 {
+  background-position-y: -300px;
+  background-position-x: 0px;
+}
+
+.Card-background__3-2 {
+  background-position-y: -300px;
+  background-position-x: -62px;
+}
+
+.Card-background__3-3 {
+  background-position-y: -300px;
+  background-position-x: -124px;
+}
+
+.Card-background__3-4 {
+  background-position-y: -300px;
+  background-position-x: -188px;
+}
+
+.Card-background__3-5 {
+  background-position-y: -300px;
+  background-position-x: -251px;
+}
+
+.Card-background__3-6 {
+  background-position-y: -300px;
+  background-position-x: -317px;
+}
+
+.Card-background__3-7 {
+  background-position-y: -300px;
+  background-position-x: -378px;
+}
+
+.Card-background__3-8 {
+  background-position-y: -300px;
+  background-position-x: -442px;
+}
+
+.Card-background__3-9 {
+  background-position-y: -300px;
+  background-position-x: -505px;
+}
+
+.Card-background__3-10 {
+  background-position-y: -300px;
+  background-position-x: -569px;
+}

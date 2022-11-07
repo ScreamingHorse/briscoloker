@@ -1,0 +1,68 @@
+.Register {
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+  background: lightgray;
+  border-radius: 15px;
+  margin: auto;
+  margin-top: 15px;
+  padding: 15px;
+}
+
+.Register-input {
+  height: 25px;
+  border-radius: 30px;
+  padding: 5px;
+  margin: 5px;
+  font-size: 18px;
+  border: 0px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.Register-input:focus {
+  outline: none;
+  border: 1px solid lightslategray;
+}
+
+.Register-button {
+  height: 35px;
+  font-size: 18px;
+  border-radius: 30px;
+  padding: 5px;
+  margin: 5px;
+  width: 245px;
+  border: 0px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.Register-button:focus {
+  outline: none;
+  border: 1px solid lightslategray;
+}
+
+.Register-buttons {
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-top: 15px;
+}
+
+.Register-flashMessage {
+  border: 2px solid red;
+  background-color: brown;
+  border-radius: 20px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.Register-inputContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}

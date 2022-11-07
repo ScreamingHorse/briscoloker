@@ -1,0 +1,62 @@
+.Login {
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+  background: lightgray;
+  border-radius: 15px;
+  margin: auto;
+  margin-top: 15px;
+  padding: 15px;
+}
+
+.Login-input {
+  height: 25px;
+  font-size: 18px;
+  border-radius: 30px;
+  padding: 5px;
+  margin: 5px;
+  width: 215px;
+  border: 0px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.Login-input:focus {
+  outline: none;
+  border: 1px solid lightslategray;
+}
+
+
+.Login-inputs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.Login-buttons {
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  justify-content: center;
+  margin-top: 15px;
+  flex-direction: column;
+}
+
+.Login-buttons button {
+  height: 35px;
+  font-size: 18px;
+  border-radius: 30px;
+  padding: 1px;
+  margin: 5px;
+  width: 245px;
+}
+
+.Login-flashMessage {
+  border: 2px solid red;
+  background-color: brown;
+  border-radius: 20px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}

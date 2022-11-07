@@ -3,16 +3,16 @@
 Briscoloker is a card game, the project is split in several repositories.
 
 **FrontEnd:**
-The is a web client create with react app: [https://github.com/ScreamingHorse/briscoloker-webclient](https://github.com/ScreamingHorse/briscoloker-webclient)
+The is a web client create with react app: [https://github.com/ScreamingHorse/briscoloker/webclient](https://github.com/ScreamingHorse/briscoloker/webclient)
 
 **Backend:**
 
-The server at the moment is a Socket.io on Heroku: [https://github.com/ScreamingHorse/briscoloker-socketio](https://github.com/ScreamingHorse/briscoloker-socketio)
+The server at the moment is a Socket.io on Heroku: [https://github.com/ScreamingHorse/briscoloker/socketio](https://github.com/ScreamingHorse/briscoloker/socketio)
 
 
 **Rules of the game:**
 
-2 player game:
+2 player game:O
   Deck: 40 cards deck
 
   -> At the each player receive 3 cards
@@ -23,7 +23,7 @@ The server at the moment is a Socket.io on Heroku: [https://github.com/Screaming
   1. Player one makes a bet.
   2. The second player can:
     Call the bet: in this case:
-      a. Player one plays
+      a. Player one playsO
       b. Player two plays
       c. Highest card wins the round, the winner takes the cards and the bets.
     Fold: 

@@ -1,0 +1,66 @@
+.playButton {
+  height: 150px;
+  font-size: 110px;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 15px;
+  background-color: lightgray;
+}
+
+.Lobby-main {
+  display: flex
+}
+
+.Lobby-main__userInfo {
+  white-space: nowrap;
+  margin-left: 10px;
+  font-size: 15px;
+  margin-top: 10px;
+  background-color: lightgray;
+  border-radius: 15px;
+  padding: 15px;
+}
+
+.Lobby-main__pastggames {
+  margin-left: 10px;
+  font-size: 25px;
+  margin-top: 10px;
+  background-color: lightgray;
+  background: 2px solid aquamarine;
+  border-radius: 15px;
+  padding: 15px;
+}
+
+.Lobby-main__pastggames ul {
+  list-style: none;
+  margin: 5px;
+  margin-left: -40px;
+}
+
+.Lobby-main__pastggames li {
+  font-size: 18px;
+}
+
+.Lobby-main__pastggames li.winner {
+  color: green;
+}
+
+.Lobby-main__pastggames li.loser {
+  color: red;
+}
+
+.Lobby-main__playbutton {
+  display: flex;
+  flex-direction: column;
+}
+
+.Lobby-main__pastggames___stats {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.Lobby-main__pastggames___list {
+  height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
