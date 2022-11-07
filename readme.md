@@ -3,11 +3,11 @@
 Briscoloker is a card game, the project is split in several repositories.
 
 **FrontEnd:**
-The is a web client create with react app: [https://github.com/ScreamingHorse/briscoloker/webclient](https://github.com/ScreamingHorse/briscoloker/webclient)
+The is a web client create with react app: [https://github.com/ScreamingHorse/briscoloker/tree/master/webclient](https://github.com/ScreamingHorse/briscoloker/tree/master/webclient)
 
 **Backend:**
 
-The server at the moment is a Socket.io on Heroku: [https://github.com/ScreamingHorse/briscoloker/socketio](https://github.com/ScreamingHorse/briscoloker/socketio)
+The server at the moment is a Socket.io on Heroku: [https://github.com/ScreamingHorse/briscoloker/tree/master/socketio](https://github.com/ScreamingHorse/briscoloker/tree/master/socketio)
 
 
 **Rules of the game:**
