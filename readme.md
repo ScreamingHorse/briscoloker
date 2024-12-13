@@ -1,3 +1,9 @@
+***REPO MOVED TO CODEBERG***
+[https://codeberg.org/ScreamingHorseStudio/briscoloker](https://codeberg.org/ScreamingHorseStudio/briscoloker)
+
+
+
+
 **Briscoloker**
 
 Briscoloker is a card game, the project is split in several repositories.
